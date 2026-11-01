@@ -1,0 +1,52 @@
+* { box-sizing:border-box; border-width:0 }
+body { margin:0; font-family:Inter,Arial,sans-serif; color:#17322e; background:#f4f3ed }
+p,h1,h2,h3 { margin:0 }
+button,a,input,select { font:inherit; color:inherit }
+button,a { cursor:pointer }
+a { text-decoration:none }
+a:hover { text-decoration:underline }
+:focus-visible { outline:3px solid #dc910c; outline-offset:2px }
+main > div, water-surface { min-height:100svh }
+.campus-backdrop { min-height:100svh; padding:20px 12px }
+.login-modal { max-width:100% }
+.input input { width:100%; background:transparent; height:100%; font-size:14px }
+.hero-copy { width:min(760px,62%) }
+.hero-illustration { width:min(360px,32%) }
+[data-name="Detailed shop grid"] { column-gap:min(22px,1.5vw) }
+[data-name="Detailed shop card"] { max-width:32.1% }
+[data-name="Detailed shop card"]:first-child { max-width:29% }
+[data-name$=" content"] { padding-inline:5% }
+[data-name="Top navigation"],.footer { padding-inline:4.45% }
+[data-name="Cart table"],[data-name="Orders table"] { overflow-x:auto }
+[data-name="Table header"],[data-name="Table row"],[data-name="Order row"] { display:grid; grid-template-columns:1fr 1.8fr 1fr 1fr 1.5fr; min-width:690px }
+[data-name="Orders table"] > div { grid-template-columns:1fr 1.25fr 1fr 1fr 1fr }
+[data-name="Table cell"] { width:auto }
+.action { cursor:pointer }
+.action:hover { filter:brightness(.94) }
+dialog { width:min(390px,92vw); border:1px solid #d9ddd8; border-radius:16px; padding:28px; color:#17322e; box-shadow:0 18px 80px #092e2440 }
+dialog::backdrop { background:#071f18aa }
+dialog h2 { margin-bottom:12px }
+dialog p { margin-bottom:14px; line-height:1.5 }
+dialog button { background:#0b3c35; color:white; border-radius:6px; padding:10px 14px; margin:8px 8px 0 0 }
+dialog input { border:1px solid #adbcb6; border-radius:6px; padding:10px; width:100%; margin-bottom:8px }
+[data-name="Steps row"],[data-name^="Benefits row"] { overflow:visible }
+@media(max-width:900px) {
+  [data-name="Top navigation"] { height:auto; padding-block:14px; gap:12px; flex-wrap:wrap }
+  [data-name="Navigation links"] { flex-wrap:wrap; gap:16px }
+  .hero-copy { width:60% }
+  .hero-copy > p:first-of-type { font-size:clamp(30px,4vw,52px) }
+  [data-name="Detailed shop card"],[data-name="Detailed shop card"]:first-child { width:48%; max-width:48%; height:auto }
+}
+@media(max-width:650px) {
+  [data-name$=" content"] { padding:24px 16px }
+  .hero-banner,.footer { flex-direction:column; align-items:flex-start; height:auto; padding:24px }
+  .hero-copy,.hero-illustration { width:100% }
+  .hero-illustration { height:180px }
+  [data-name="Steps row"],[data-name^="Benefits row"] { flex-direction:column }
+  [data-water-box] { max-width:100% }
+  [data-name$=" card"] { width:100%; flex:auto }
+  [data-name="Detailed shop card"],[data-name="Detailed shop card"]:first-child { width:100%; max-width:100% }
+  [data-name="Status legend"],[data-name="Checkout actions"],.footer-links { flex-wrap:wrap; gap:12px; height:auto }
+  .login-modal { padding:26px 20px }
+  .login-modal > p { white-space:normal }
+}

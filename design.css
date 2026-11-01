@@ -1,0 +1,123 @@
+/* Layout and typography from the five BMU Campus Eats frames. */
+.login { background:white; align-content:stretch; display:flex; flex-direction:column; align-items:flex-start; position:relative; width:100%;height:100%; }
+.campus-backdrop { align-content:stretch; display:flex; flex:1 0 0; flex-direction:column; align-items:center; justify-content:center; min-height:1px; overflow:clip; position:relative; width:100%; }
+.element { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+.element-2 { position:absolute; height:100%; left:0; max-width:none; top:0; width:109.15%; }
+.dark-glass-overlay { position:absolute; background:rgba(7,31,24,0.7); inset:0; }
+.login-modal { background:white; align-content:stretch; display:flex; flex-direction:column; gap:20px; align-items:center; overflow:clip; padding:40px; position:relative; border-radius:20px; box-shadow:0px 12px 32px 0px rgba(11,60,53,0.1); flex-shrink:0; width:460px; }
+.university-logo { align-content:stretch; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:clip; position:relative; border-radius:999px; flex-shrink:0; width:72px;height:72px; }
+.element-3 { position:absolute; inset:0; max-width:none; object-fit:contain; pointer-events:none; border-radius:999px; width:100%;height:100%; }
+.tree-pine { position:relative; flex-shrink:0; width:42px;height:42px; }
+.element-4 { position:absolute; display:block; inset:0; max-width:none; width:100%;height:100%; }
+.brand-row { align-content:stretch; display:flex; gap:8px; align-items:center; position:relative; flex-shrink:0; }
+.utensils { position:relative; flex-shrink:0; width:16px;height:16px; }
+.element-5 { overflow-wrap:break-word; font-weight:700; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#0b3c35; font-size:13px; white-space:nowrap; }
+.element-6 { overflow-wrap:break-word; font-weight:400; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#0b3c35; font-size:12px; white-space:nowrap; }
+.element-7 { overflow-wrap:break-word; font-weight:500; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#17322e; font-size:24px; white-space:nowrap; }
+.element-8 { overflow-wrap:break-word; font-weight:400; line-height:22px; min-width:100%; font-style:normal; position:relative; flex-shrink:0; color:#66756f; font-size:14px; width:min-content; }
+.form-field { align-content:stretch; display:flex; flex-direction:column; gap:8px; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; width:100%; }
+.element-9 { overflow-wrap:break-word; font-weight:700; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#17322e; font-size:13px; white-space:nowrap; }
+.input { border-width:1px; border-color:#d9ddd8; border-style:solid; align-content:stretch; display:flex; height:48px; align-items:center; overflow:clip; padding-inline:14px; position:relative; border-radius:6px; flex-shrink:0; width:100%; }
+.element-10 { overflow-wrap:break-word; font-weight:400; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#66756f; font-size:14px; white-space:nowrap; }
+.element-11 { overflow-wrap:break-word; display:block; font-weight:600; line-height:0; font-style:normal; position:relative; flex-shrink:0; color:#0b3c35; font-size:13px; white-space:nowrap; }
+.element-12 { cursor:pointer; line-height:normal; }
+.primary-action { align-content:stretch; display:flex; flex-direction:column; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; width:100%; }
+.button { background:#0b3c35; border-width:1px; border-color:#0b3c35; border-style:solid; align-content:stretch; display:flex; align-items:flex-start; overflow:clip; padding-inline:18px; padding-block:11px; position:relative; border-radius:6px; flex-shrink:0; }
+.element-13 { overflow-wrap:break-word; font-weight:700; line-height:normal; font-style:normal; position:relative; flex-shrink:0; font-size:14px; color:white; white-space:nowrap; }
+.element-14 { overflow-wrap:break-word; font-weight:400; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#66756f; font-size:12px; white-space:nowrap; }
+.home { background:#f4f3ed; align-content:stretch; display:flex; flex-direction:column; align-items:flex-start; position:relative; width:100%;height:100%; }
+.top-navigation { background:#0b3c35; align-content:stretch; display:flex; height:76px; align-items:center; justify-content:space-between; overflow:clip; padding-inline:64px; position:relative; flex-shrink:0; width:100%; }
+.brand { align-content:stretch; display:flex; gap:12px; align-items:center; overflow:clip; position:relative; flex-shrink:0; }
+.university-emblem { align-content:stretch; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:clip; position:relative; border-radius:999px; flex-shrink:0; width:42px;height:42px; }
+.university { position:relative; flex-shrink:0; width:26px;height:26px; }
+.element-15 { overflow-wrap:break-word; font-weight:700; line-height:normal; font-style:normal; position:relative; flex-shrink:0; font-size:20px; color:white; white-space:nowrap; }
+.status-badge { background:#d97706; align-content:stretch; display:flex; align-items:flex-start; overflow:clip; padding-inline:10px; padding-block:6px; position:relative; border-radius:999px; flex-shrink:0; }
+.element-16 { overflow-wrap:break-word; font-weight:800; line-height:normal; font-style:normal; position:relative; flex-shrink:0; font-size:11px; color:white; white-space:nowrap; }
+.navigation-links { overflow-wrap:break-word; align-content:stretch; display:flex; font-weight:600; gap:28px; align-items:flex-start; line-height:normal; font-style:normal; overflow:clip; position:relative; flex-shrink:0; font-size:14px; color:white; white-space:nowrap; }
+.element-17 { position:relative; flex-shrink:0; }
+.home-content { align-content:stretch; display:flex; flex-direction:column; gap:32px; align-items:flex-start; overflow:clip; padding-bottom:56px; padding-top:40px; padding-inline:72px; position:relative; flex-shrink:0; width:100%; }
+.hero-banner { border-width:1px; border-color:rgba(255,255,255,0.08); border-style:solid; align-content:stretch; display:flex; gap:32px; align-items:center; overflow:clip; padding:40px; position:relative; border-radius:28px; box-shadow:0px 2px 8px 0px rgba(11,60,53,0.04),0px 12px 32px 0px rgba(11,60,53,0.08); flex-shrink:0; width:100%; }
+.element-18 { position:absolute; inset:0; max-width:none; object-fit:cover; pointer-events:none; border-radius:28px; width:100%;height:100%; }
+.hero-copy { align-content:stretch; display:flex; flex-direction:column; gap:20px; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; width:760px; }
+.element-19 { overflow-wrap:break-word; font-weight:700; line-height:1.08; min-width:100%; font-style:normal; position:relative; flex-shrink:0; font-size:52px; color:white; width:min-content; }
+.element-20 { overflow-wrap:break-word; font-weight:400; line-height:1.6; min-width:100%; font-style:normal; position:relative; flex-shrink:0; color:#d8e7e4; font-size:17px; width:min-content; }
+.hero-actions { align-content:stretch; display:flex; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; }
+.button-2 { background:white; border-width:1px; border-style:solid; border-color:white; align-content:stretch; display:flex; align-items:flex-start; overflow:clip; padding-inline:20px; padding-block:12px; position:relative; border-radius:999px; flex-shrink:0; }
+.element-21 { overflow-wrap:break-word; font-weight:700; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#0b3c35; font-size:14px; white-space:nowrap; }
+.hero-illustration { background:rgba(255,255,255,0.07); border-width:1px; border-color:rgba(255,255,255,0.1); border-style:solid; align-content:stretch; display:flex; flex-direction:column; height:280px; align-items:center; justify-content:center; overflow:clip; position:relative; border-radius:24px; box-shadow:0px 16px 36px 0px rgba(11,60,53,0.1); flex-shrink:0; width:360px; }
+.screenshot-2026-09-18-at-3-29-42-pm-1 { height:420px; position:relative; flex-shrink:0; width:421px; }
+.element-22 { position:absolute; left:0.09%; max-width:none; width:100%;height:100%; top:21.46%; }
+.shopping-bag { position:relative; flex-shrink:0; width:164px;height:164px; }
+.dashboard-sections { align-content:stretch; display:flex; flex-direction:column; gap:24px; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; width:100%; }
+.how-it-works-section { background:white; border-width:1px; border-color:#e3e7e2; border-style:solid; align-content:stretch; display:flex; flex-direction:column; gap:24px; align-items:flex-start; overflow:clip; padding:32px; position:relative; border-radius:24px; box-shadow:0px 2px 8px 0px rgba(11,60,53,0.03),0px 10px 28px 0px rgba(11,60,53,0.05); flex-shrink:0; width:100%; }
+.section-heading { overflow-wrap:break-word; align-content:stretch; display:flex; flex-direction:column; gap:8px; align-items:flex-start; font-style:normal; overflow:clip; position:relative; flex-shrink:0; width:100%; }
+.element-23 { font-weight:700; line-height:normal; position:relative; flex-shrink:0; color:#0b3c35; font-size:32px; width:100%; }
+.element-24 { font-weight:400; line-height:1.5; position:relative; flex-shrink:0; color:#66756f; font-size:15px; width:100%; }
+.steps-row { align-content:stretch; display:flex; gap:16px; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; width:100%; }
+.step-card { background:#f7f8f6; border-width:1px; border-color:#e3e7e2; border-style:solid; align-content:stretch; display:flex; flex:1 0 0; flex-direction:column; gap:16px; align-items:flex-start; min-width:1px; overflow:clip; padding:24px; position:relative; border-radius:20px; box-shadow:0px 2px 6px 0px rgba(11,60,53,0.02),0px 8px 20px 0px rgba(11,60,53,0.04); }
+.step-badge { background:#e4efea; align-content:stretch; display:flex; align-items:flex-start; overflow:clip; padding-inline:10px; padding-block:6px; position:relative; border-radius:999px; flex-shrink:0; }
+.element-25 { overflow-wrap:break-word; font-weight:800; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#0b3c35; font-size:11px; white-space:nowrap; }
+.element-26 { font-weight:700; line-height:normal; position:relative; flex-shrink:0; color:#17322e; font-size:20px; width:100%; }
+.element-27 { font-weight:400; line-height:1.5; position:relative; flex-shrink:0; color:#66756f; font-size:14px; width:100%; }
+.benefit-card { background:#f7f8f6; border-width:1px; border-color:#e3e7e2; border-style:solid; align-content:stretch; display:flex; flex:1 0 0; flex-direction:column; gap:14px; align-items:flex-start; min-width:1px; overflow:clip; padding:24px; position:relative; border-radius:20px; box-shadow:0px 2px 6px 0px rgba(11,60,53,0.02),0px 8px 20px 0px rgba(11,60,53,0.04); }
+.benefit-icon { background:#e4efea; align-content:stretch; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:clip; position:relative; border-radius:999px; flex-shrink:0; width:48px;height:48px; }
+.zap { position:relative; flex-shrink:0; width:20px;height:20px; }
+.benefit-copy { overflow-wrap:break-word; align-content:stretch; display:flex; flex-direction:column; gap:6px; align-items:flex-start; font-style:normal; overflow:clip; position:relative; flex-shrink:0; width:100%; }
+.shops-content { align-content:stretch; display:flex; flex-direction:column; gap:28px; align-items:flex-start; overflow:clip; padding-inline:72px; padding-block:48px; position:relative; flex-shrink:0; width:100%; }
+.element-28 { overflow-wrap:break-word; font-weight:400; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#0b3c35; font-size:44px; width:100%; }
+.status-legend { background:white; align-content:stretch; display:flex; gap:22px; align-items:center; overflow:clip; padding:18px; position:relative; border-radius:12px; flex-shrink:0; width:100%; }
+.element-29 { overflow-wrap:break-word; font-weight:700; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#17322e; font-size:12px; white-space:nowrap; }
+.status-badge-2 { background:#fee4e2; align-content:stretch; display:flex; align-items:flex-start; overflow:clip; padding-inline:10px; padding-block:6px; position:relative; border-radius:999px; flex-shrink:0; }
+.element-30 { overflow-wrap:break-word; font-weight:800; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#b42318; font-size:11px; white-space:nowrap; }
+.status-badge-3 { background:#fff3c4; align-content:stretch; display:flex; align-items:flex-start; overflow:clip; padding-inline:10px; padding-block:6px; position:relative; border-radius:999px; flex-shrink:0; }
+.element-31 { overflow-wrap:break-word; font-weight:800; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#9a6700; font-size:11px; white-space:nowrap; }
+.detailed-shop-grid { align-content:flex-start; display:flex; flex-wrap:wrap; gap:22px; align-items:flex-start; position:relative; flex-shrink:0; width:100%; }
+.detailed-shop-card { background:white; align-content:stretch; display:flex; flex-direction:column; height:241px; align-items:flex-start; overflow:clip; position:relative; border-radius:12px; box-shadow:0px 8px 24px 0px rgba(11,60,53,0.09); flex-shrink:0; width:376px; }
+.shop-artwork { background:#e4efea; align-content:stretch; display:flex; flex-direction:column; height:120px; align-items:center; justify-content:center; overflow:clip; position:relative; flex-shrink:0; width:100%; }
+.tempimagekifteb-1 { aspect-ratio:650/1110; position:relative; flex-shrink:0; width:100%; }
+.element-32 { position:absolute; height:51.98%; left:7.24%; max-width:none; top:34.51%; width:92.82%; }
+.sandwich { position:relative; flex-shrink:0; width:70px;height:70px; }
+.shop-details { align-content:stretch; display:flex; flex-direction:column; gap:12px; align-items:flex-start; overflow:clip; padding:22px; position:relative; flex-shrink:0; width:100%; }
+.shop-heading { align-content:stretch; display:flex; align-items:flex-start; justify-content:space-between; overflow:clip; position:relative; flex-shrink:0; width:100%; }
+.element-33 { overflow-wrap:break-word; font-weight:400; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#17322e; font-size:20px; white-space:nowrap; }
+.detailed-shop-card-2 { background:white; align-content:stretch; display:flex; flex-direction:column; align-items:flex-start; overflow:clip; position:relative; border-radius:12px; box-shadow:0px 8px 24px 0px rgba(11,60,53,0.09); flex-shrink:0; width:416px; }
+.tempimageg116h2-1 { height:694px; position:relative; flex-shrink:0; width:758px; }
+.element-34 { position:absolute; height:122.72%; left:-8.54%; max-width:none; top:10.04%; width:108.56%; }
+.element-35 { position:absolute; display:flex; height:124.749px; align-items:center; justify-content:center; left:-1.37px; top:0; width:417.345px; }
+.element-36 { flex:none; rotate:0.66deg; }
+.tempimageawbeti-1 { height:120px; position:relative; width:416px; }
+.element-37 { position:absolute; inset:0; max-width:none; object-fit:cover; pointer-events:none; width:100%;height:100%; }
+.button-3 { background:white; border-width:1px; border-color:#d9ddd8; border-style:solid; align-content:stretch; display:flex; align-items:flex-start; overflow:clip; padding-inline:18px; padding-block:11px; position:relative; border-radius:6px; flex-shrink:0; }
+.tempimagek03knj-1 { height:378px; position:relative; flex-shrink:0; width:469px; }
+.element-38 { position:absolute; height:100%; left:3.2%; max-width:none; top:30.38%; width:100.03%; }
+.detailed-shop-card-3 { background:white; align-content:stretch; display:flex; flex-direction:column; height:265px; align-items:flex-start; overflow:clip; position:relative; border-radius:12px; box-shadow:0px 8px 24px 0px rgba(11,60,53,0.09); flex-shrink:0; width:412px; }
+.tempimagezohzxp-1 { aspect-ratio:412/660; position:relative; flex-shrink:0; width:100%; }
+.element-39 { position:absolute; height:52.43%; left:-0.02%; max-width:none; top:32.42%; width:115.2%; }
+.screenshot-2026-09-18-at-3-18-11-pm-1 { height:307px; position:relative; flex-shrink:0; width:500px; }
+.cart-content { align-content:stretch; display:flex; flex-direction:column; gap:24px; align-items:flex-start; overflow:clip; padding-inline:72px; padding-block:44px; position:relative; flex-shrink:0; width:100%; }
+.element-40 { overflow-wrap:break-word; font-weight:400; line-height:normal; min-width:100%; font-style:normal; position:relative; flex-shrink:0; color:#0b3c35; font-size:44px; width:min-content; }
+.warning-banner { background:#fff3c4; align-content:stretch; display:flex; gap:10px; align-items:flex-start; overflow:clip; padding:16px; position:relative; border-radius:6px; flex-shrink:0; width:100%; }
+.alert-triangle { position:relative; flex-shrink:0; width:18px;height:18px; }
+.element-41 { overflow-wrap:break-word; font-weight:400; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#9a6700; font-size:12px; white-space:nowrap; }
+.element-42 { overflow-wrap:break-word; font-weight:400; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#17322e; font-size:22px; white-space:nowrap; }
+.cart-table { background:white; border-width:1px; border-color:#d9ddd8; border-style:solid; align-content:stretch; display:flex; flex-direction:column; align-items:flex-start; overflow:clip; position:relative; border-radius:12px; flex-shrink:0; width:100%; }
+.table-header { background:#e4efea; border-color:#d9ddd8; border-bottom-width:1px; border-style:solid; align-content:stretch; display:flex; height:62px; align-items:center; overflow:clip; padding-inline:20px; position:relative; flex-shrink:0; width:100%; }
+.table-cell { align-content:stretch; display:flex; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; width:200px; }
+.element-43 { overflow-wrap:break-word; font-weight:400; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#17322e; font-size:13px; white-space:nowrap; }
+.table-cell-2 { align-content:stretch; display:flex; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; width:360px; }
+.table-cell-3 { align-content:stretch; display:flex; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; width:260px; }
+.table-row { background:white; border-color:#d9ddd8; border-bottom-width:1px; border-style:solid; align-content:stretch; display:flex; height:62px; align-items:center; overflow:clip; padding-inline:20px; position:relative; flex-shrink:0; width:100%; }
+.checkout-summary { align-content:stretch; display:flex; gap:16px; align-items:center; overflow:clip; position:relative; flex-shrink:0; }
+.element-44 { overflow-wrap:break-word; font-weight:400; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#17322e; font-size:18px; white-space:nowrap; }
+.orders-content { align-content:stretch; display:flex; flex-direction:column; gap:26px; align-items:flex-start; overflow:clip; padding-inline:72px; padding-block:48px; position:relative; flex-shrink:0; width:100%; }
+.table-header-2 { background:#e4efea; border-color:#d9ddd8; border-bottom-width:1px; border-style:solid; align-content:stretch; display:flex; height:72px; align-items:center; overflow:clip; padding-inline:24px; position:relative; flex-shrink:0; width:100%; }
+.table-cell-4 { align-content:stretch; display:flex; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; width:240px; }
+.table-cell-5 { align-content:stretch; display:flex; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; width:300px; }
+.order-row { background:white; border-color:#d9ddd8; border-bottom-width:1px; border-style:solid; align-content:stretch; display:flex; height:72px; align-items:center; overflow:clip; padding-inline:24px; position:relative; flex-shrink:0; width:100%; }
+.element-45 { overflow-wrap:break-word; font-weight:500; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#17322e; font-size:13px; white-space:nowrap; }
+.status-badge-4 { background:#eaf2ff; align-content:stretch; display:flex; align-items:flex-start; overflow:clip; padding-inline:10px; padding-block:6px; position:relative; border-radius:999px; flex-shrink:0; }
+.element-46 { overflow-wrap:break-word; font-weight:800; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#175cd3; font-size:11px; white-space:nowrap; }
+.status-badge-5 { background:#f0eafe; align-content:stretch; display:flex; align-items:flex-start; overflow:clip; padding-inline:10px; padding-block:6px; position:relative; border-radius:999px; flex-shrink:0; }
+.element-47 { overflow-wrap:break-word; font-weight:800; line-height:normal; font-style:normal; position:relative; flex-shrink:0; color:#6941c6; font-size:11px; white-space:nowrap; }
+.footer { overflow-wrap:break-word; background:#0b3c35; align-content:stretch; display:flex; font-weight:400; height:110px; align-items:center; justify-content:space-between; line-height:normal; font-style:normal; overflow:clip; padding-inline:64px; position:relative; flex-shrink:0; font-size:13px; color:white; width:100%; white-space:nowrap; }
+.footer-links { align-content:stretch; display:flex; gap:26px; align-items:flex-start; overflow:clip; position:relative; flex-shrink:0; }
