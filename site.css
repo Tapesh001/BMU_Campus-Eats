@@ -3,6 +3,9 @@ body { margin:0; font-family:Inter,Arial,sans-serif; color:#17322e; background:#
 p,h1,h2,h3 { margin:0 }
 button,a,input,select { font:inherit; color:inherit }
 button,a { cursor:pointer }
+button.action { background-color:transparent; padding:0 }
+button.action.button { background-color:#0b3c35; padding:11px 18px }
+button.action.button-3 { background-color:white; padding:11px 18px }
 a { text-decoration:none }
 a:hover { text-decoration:underline }
 :focus-visible { outline:3px solid #dc910c; outline-offset:2px }
