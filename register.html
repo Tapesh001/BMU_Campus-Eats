@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Create account · BMU Campus Eats</title><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="register.css"><script defer src="account.js"></script></head>
+<body><header class="campus-bar"><a class="wordmark" href="index.html"><img src="assets/5733f.png" width="42" height="42" alt=""> BMU Campus Eats <small>STUDENT</small></a>
+<nav aria-label="Main navigation"><a href="index.html">Home</a><a href="shops.html">Shops</a><a href="cart.html">Cart</a><a href="orders.html">Orders</a><a href="profile.html">Profile</a></nav></header><main class="account-wrap"><section class="account-card"><small class="eyebrow">STUDENT REGISTRATION</small><h1>Create your account</h1><p>Save your pickup details for campus orders.</p>
+<form id="register"><label>Full name<input name="name" autocomplete="name" maxlength="80" required></label>
+<label>BMU email<input name="email" type="email" autocomplete="email" placeholder="student@bmu.edu.in" maxlength="160" pattern="[^@ ]+@bmu\.edu\.in" required></label>
+<label>Student ID<input name="studentId" pattern="[A-Za-z0-9_\-]{2,40}" maxlength="40" title="2–40 letters, numbers, underscores or hyphens" required></label>
+<label>Hostel / residence<input name="hostel" placeholder="Hostel name or day scholar" maxlength="80" required></label>
+<label>Pickup preference<select name="pickup"><option>Hostel gate</option><option>Shop counter</option></select></label>
+<label>Password<input name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></label>
+<label>Confirm password<input name="confirm" type="password" autocomplete="new-password" required></label>
+<button>Create account</button></form><p role="status"></p><a href="login.html">Already registered? Log in</a></section></main></body></html>

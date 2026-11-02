@@ -1,8 +1,12 @@
+async function startCampusPage() {
+const response = await fetch("/api/profile");
+const student = response.ok ? await response.json() : null;
+const storagePrefix = student ? "bmu."+student.id+"." : "bmu.";
 const page = document.body.dataset.page;
 const named = name => '[data-name="' + name + '"]';
 const all = (selector, root = document) => [...root.querySelectorAll(selector)];
 const title = node => node.textContent.trim();
-const pages = { Home:"index.html", Shops:"shops.html", Cart:"cart.html", Orders:"orders.html", Login:"login.html" };
+const pages = { Home:"index.html", Shops:"shops.html", Cart:"cart.html", Orders:"orders.html", Login:"login.html", Profile:"profile.html" };
 const go = path => location.assign(path);
 const sampleCart = [
   {shop:"Kathi Junction", dish:"Paneer kathi roll", price:120, qty:2},
@@ -13,9 +17,9 @@ const menu = {
   "Domino's":["Margherita pizza",199], "Burger Singh":["Veg burger",99],
   "Maggie Point":["Masala noodles",60], "Tuck Shop":["Campus snack box",75]
 };
-const load = (key, fallback) => JSON.parse(localStorage.getItem("bmu."+key) || "null") ?? fallback;
-const save = (key, value) => localStorage.setItem("bmu."+key, JSON.stringify(value));
-const cart = load("cart", sampleCart);
+const load = (key, fallback) => JSON.parse(localStorage.getItem(storagePrefix+key) || "null") ?? fallback;
+const save = (key, value) => localStorage.setItem(storagePrefix+key, JSON.stringify(value));
+const cart = load("cart", student ? [] : sampleCart);
 const orders = load("orders", []);
 
 function control(node, action, href) {
@@ -48,15 +52,9 @@ function modal(heading, message, actions = []) {
   dialog.onclose = () => dialog.remove();
   document.body.append(dialog); dialog.showModal();
 }
-function profile() {
-  const student = sessionStorage.getItem("bmu.student");
-  modal("Student profile", student || "You are browsing as a guest.", student ?
-    [["Sign out",()=>{sessionStorage.removeItem("bmu.student");go(pages.Home);}]] :
-    [["Open student login",()=>go(pages.Login)]]);
-}
 for (const node of all('.navigation-links > p,.footer-links > p')) {
   const label = title(node);
-  control(node, label === "Profile" ? profile : () => modal(label,"This preview supports student ordering only."), pages[label]);
+  control(node, () => modal(label,"This preview supports student ordering only."), pages[label]);
 }
 if (page === "login") {
   const form = document.createElement("form");
@@ -74,16 +72,20 @@ if (page === "login") {
     field.firstElementChild.replaceWith(label); field.querySelector(".input").replaceChildren(input);
     return input;
   });
-  const hint = document.createElement("small"); hint.hidden = true;
-  hint.textContent = "Local demo. Use a nickname and any demo password.";
-  form.insertBefore(hint,form.querySelector(".form-field"));
-  form.addEventListener("focusin",()=>{ hint.hidden = false; });
-  const submit = control(form.querySelector(named("Button")),()=>{}); submit.type = "submit";
-  form.onsubmit = event => {
-    event.preventDefault(); sessionStorage.setItem("bmu.student",fields[0].value.trim());
-    fields[1].value = ""; go(pages.Home);
+  const status = document.createElement("small");
+  status.setAttribute("role","status");
+  form.insertBefore(status,form.querySelector(".primary-action"));
+  fields[0].autocomplete="username"; fields[1].autocomplete="current-password";
+  const submit = control(form.querySelector(named("Button")),()=>{}); submit.type="submit";
+  form.onsubmit = async event => {
+    event.preventDefault(); submit.disabled=true;
+    try {
+      const res=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login:fields[0].value,password:fields[1].value})});
+      if (!res.ok) throw new Error((await res.json()).error);
+      location.assign("profile.html");
+    } catch(e){status.textContent=e.message;} finally {submit.disabled=false;}
   };
-  control(form.lastElementChild,()=>{hint.hidden=false;fields[0].focus();});
+  control(form.lastElementChild,null,"register.html");
 }
 if (page === "home") control(document.querySelector(named("Button")),null,pages.Shops);
 if (page === "shops") {
@@ -143,3 +145,5 @@ if (page === "orders") {
     control(row.querySelector(named("Button")),()=>modal(id,[shop,date,status,row.dataset.details].filter(Boolean).join(" · ")));
   }
 }
+}
+startCampusPage().catch(()=>{const error=document.createElement("p");error.setAttribute("role","alert");error.textContent="Campus Eats could not connect. Start the Express server and reload.";document.body.prepend(error);});

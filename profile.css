@@ -1,0 +1,4 @@
+.account-wrap { padding-block:48px }
+#profile { grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr)) }
+#profile button { grid-column:1/-1 }
+#logout { color:#0b3c35; background:transparent; text-decoration:underline }

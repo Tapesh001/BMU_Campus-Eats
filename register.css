@@ -1,0 +1,3 @@
+.account-wrap { padding-block:40px }
+#register { grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr)) }
+#register button { grid-column:1/-1 }
