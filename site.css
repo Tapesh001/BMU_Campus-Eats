@@ -24,7 +24,7 @@ button.action.button-3 { background-color:white; padding:11px 18px }
 a { text-decoration:none }
 a:hover { text-decoration:underline }
 :focus-visible { outline:3px solid #dc910c; outline-offset:2px }
-main > div, water-surface { min-height:100svh }
+main > div[data-name], water-surface { min-height:100svh }
 [data-name$=" content"] { padding-inline:5% }
 [data-name="Top navigation"],.footer { padding-inline:4.45% }
 [data-name="Cart table"],[data-name="Orders table"] { overflow-x:auto }
