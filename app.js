@@ -13,6 +13,9 @@ const load = (key, fallback) => JSON.parse(localStorage.getItem(storagePrefix+ke
 const save = (key, value) => localStorage.setItem(storagePrefix+key, JSON.stringify(value));
 const cart = load("cart", []);
 const orders = load("orders", []);
+const rupees = value => "₹" + Number(value.toFixed(2)).toLocaleString("en-IN",{maximumFractionDigits:2});
+const lineTax = line => Math.round(line.price * line.qty * (line.taxPercent || 0)) / 100;
+const totalWithTax = lines => lines.reduce((sum,line)=>sum+line.price*line.qty+lineTax(line),0);
 
 function control(node, action, href) {
   const el = document.createElement(href ? "a" : "button");
@@ -104,33 +107,49 @@ if (page === "menu") {
     return;
   }
   const search=document.querySelector("#search"), items=document.querySelector("#items");
+  const category=document.querySelector("#category");
+  for(const group of new Set(menu.items.map(item=>item.category).filter(Boolean))) category.add(new Option(group,group));
+  category.parentElement.hidden=category.options.length<2;
+  document.querySelector("#menu-note").textContent=menu.taxPercent ? menu.taxPercent+"% GST extra at checkout." : "";
   function render() {
     items.replaceChildren();
-    const matches=menu.items.filter(item=>item.dish.toLowerCase().includes(search.value.trim().toLowerCase()));
+    const query=search.value.trim().toLowerCase();
+    const matches=menu.items.filter(item=>(!category.value || item.category===category.value) &&
+      [item.dish,item.category,...(item.options||[]).flatMap(group=>group.choices.map(choice=>choice[0]))].join(" ").toLowerCase().includes(query));
     feedback.textContent=matches.length ? matches.length+" matching item"+(matches.length===1?"":"s") : "No matching item found.";
     for(const item of matches) {
       const card=document.createElement("form");card.className="menu-item";
       const name=document.createElement("h2");name.textContent=item.dish;
       const status=document.createElement("small");
-      status.textContent="₹"+item.price+" · "+(menu.closed?"Shop closed":item.stock?item.stock+" available":"Out of stock");
+      const controls=(item.options || []).map(group=>{
+        const wrapper=document.createElement("label");wrapper.textContent=group.label;
+        const select=document.createElement("select");
+        group.choices.forEach(([label,extra],idx)=>select.add(new Option(label+(extra?" · +"+rupees(extra):""),idx)));
+        wrapper.append(select);return {wrapper,select,group};
+      });
+      const selections=()=>controls.map(({group,select})=>group.choices[select.selectedIndex]);
+      const price=()=>selections().reduce((sum,choice)=>sum+choice[1],item.price);
+      const update=()=>{status.textContent=rupees(price())+" · "+(menu.closed?"Shop closed":item.stock===0?"Out of stock":item.stock!=null?item.stock+" available":"Confirmed by shop");};
+      controls.forEach(({select})=>select.addEventListener("change",update));update();
       const label=document.createElement("label");label.textContent="Quantity";
-      const qty=document.createElement("input");qty.type="number";qty.required=true;qty.min=1;qty.max=item.stock;qty.value=1;
+      const qty=document.createElement("input");qty.type="number";qty.required=true;qty.min=1;if(item.stock!=null)qty.max=item.stock;qty.value=1;
       label.append(qty);
       const add=document.createElement("button"); add.disabled=menu.closed || item.stock===0;
-      qty.disabled=add.disabled; add.textContent=menu.closed?"Shop closed":item.stock?"Add to cart":"Out of stock";
-      card.append(name,status,label,add);items.append(card);
+      qty.disabled=add.disabled; add.textContent=menu.closed?"Shop closed":item.stock===0?"Out of stock":"Add to cart";
+      card.append(name,status,...controls.map(c=>c.wrapper),label,add);items.append(card);
       card.onsubmit=event=>{
         event.preventDefault();
         const current=load("cart",[]);
-        const line=current.find(row=>row.shop===menu.shop && row.dish===item.dish && !row.unavailable);
-        if ((line?.qty || 0)+qty.valueAsNumber>item.stock) {feedback.textContent="Only "+item.stock+" available, including any already in your cart.";return;}
+        const dish=[item.dish,...selections().map(choice=>choice[0])].join(" · ");
+        const line=current.find(row=>row.shop===menu.shop && row.dish===dish && row.price===price() && !row.unavailable);
+        if (item.stock!=null && (line?.qty || 0)+qty.valueAsNumber>item.stock) {feedback.textContent="Only "+item.stock+" available, including any already in your cart.";return;}
         if(line) {line.qty+=qty.valueAsNumber;line.limit=item.stock;}
-        else current.push({shop:menu.shop,dish:item.dish,price:item.price,qty:qty.valueAsNumber,limit:item.stock});
+        else current.push({shop:menu.shop,dish,price:price(),qty:qty.valueAsNumber,limit:item.stock,taxPercent:menu.taxPercent || 0});
         save("cart",current);feedback.textContent="Added "+qty.value+" × "+item.dish+" to your cart.";
       };
     }
   }
-  search.addEventListener("input",render);render();
+  category.addEventListener("change",render);search.addEventListener("input",render);render();
 }
 if (page === "cart") {
   document.querySelector(".cart-content > p:nth-of-type(2)").textContent = cart.length ? "Cart items" : "Your cart is empty";
@@ -151,11 +170,12 @@ if (page === "cart") {
   });
   const buttons = all(named("Button"));
   control(buttons[0],null,pages.Shops);
-  document.querySelector(".checkout-summary > p").textContent = "Total ₹"+cart.reduce((sum,i)=>sum+i.qty*i.price,0);
+  const tax=cart.reduce((sum,line)=>sum+lineTax(line),0);
+  document.querySelector(".checkout-summary > p").textContent = "Total "+rupees(totalWithTax(cart))+(tax?" (includes "+rupees(tax)+" GST)":"");
   const available = cart.filter(i=>!i.unavailable);
-  const amount = available.reduce((sum,i)=>sum+i.price*i.qty,0);
+  const amount = totalWithTax(available);
   control(buttons[1],()=>modal("Demo checkout",available.length ?
-    "Place a local pickup order for ₹"+amount+"? Unavailable items stay in your cart." :
+    "Place a local pickup order for "+rupees(amount)+"? Unavailable items stay in your cart." :
     "Your cart has no available items.",available.length?[["Place demo order",()=>{
       for (const item of available) orders.unshift({...item,id:"#BMU-"+(1049+orders.length),date:new Date().toLocaleDateString()});
       save("orders",orders); save("cart",cart.filter(i=>i.unavailable)); go(pages.Orders);
@@ -169,7 +189,7 @@ if (page === "orders") {
     const row = first.cloneNode(true);
     const cells = all(named("Table cell")+" p",row);
     [item.id,item.shop,item.date].forEach((v,i)=>{cells[i].textContent=v;});
-    row.dataset.details = item.qty+" × "+item.dish+" · ₹"+item.qty*item.price;
+    row.dataset.details = item.qty+" × "+item.dish+" · "+rupees(totalWithTax([item]))+(lineTax(item)?" including GST":"");
     table.insertBefore(row,first);
   }
   if(student) {

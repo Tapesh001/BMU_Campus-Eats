@@ -8,3 +8,5 @@
 .menu-item small { color:#0b3c35; font-weight:700 }
 .menu-item input { max-width:70px; margin-left:10px }
 .menu-item button:disabled { background:#e5e8e4; color:#57615b; cursor:default }
+.menu-item select,.menu-tools select { max-width:100%; margin:4px 0; padding:8px; border:1px solid #ccd5ce; border-radius:6px; background:white }
+.menu-item select { display:block; width:100% }
