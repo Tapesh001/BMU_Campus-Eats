@@ -115,7 +115,7 @@ if (page === "menu") {
   const category=document.querySelector("#category");
   for(const group of new Set(menu.items.map(item=>item.category).filter(Boolean))) category.add(new Option(group,group));
   category.parentElement.hidden=category.options.length<2;
-  document.querySelector("#menu-note").textContent=menu.taxPercent ? menu.taxPercent+"% GST extra at checkout." : "";
+  document.querySelector("#menu-note").textContent=menu.note || (menu.taxPercent ? menu.taxPercent+"% GST extra at checkout." : "");
   function render() {
     items.replaceChildren();
     const query=search.value.trim().toLowerCase();
@@ -129,7 +129,7 @@ if (page === "menu") {
         const section=document.createElement("small");section.textContent=item.category;card.append(section);
       }
       if (item.price == null) {
-        const note=document.createElement("p");note.textContent="Price awaiting confirmation";
+        const note=document.createElement("p");note.textContent=item.priceNote || "Price awaiting confirmation";
         card.append(name,note);items.append(card);continue;
       }
       const status=document.createElement("small");
@@ -156,7 +156,7 @@ if (page === "menu") {
         const line=current.find(row=>row.shop===menu.shop && row.dish===dish && row.price===price() && !row.unavailable);
         if (item.stock!=null && (line?.qty || 0)+qty.valueAsNumber>item.stock) {feedback.textContent="Only "+item.stock+" available, including any already in your cart.";return;}
         if(line) {line.qty+=qty.valueAsNumber;line.limit=item.stock;}
-        else current.push({shop:menu.shop,dish,price:price(),qty:qty.valueAsNumber,limit:item.stock,taxPercent:menu.taxPercent || 0});
+        else current.push({shop:menu.shop,dish,price:price(),qty:qty.valueAsNumber,limit:item.stock,taxPercent:menu.taxPercent || 0,checkoutNote:menu.checkoutNote});
         save("cart",current);feedback.textContent="Added "+qty.value+" × "+item.dish+" to your cart.";
       };
     }
@@ -185,9 +185,11 @@ if (page === "cart") {
   const tax=cart.reduce((sum,line)=>sum+lineTax(line),0);
   document.querySelector(".checkout-summary > p").textContent = "Total "+rupees(totalWithTax(cart))+(tax?" (includes "+rupees(tax)+" GST)":"");
   const available = cart.filter(i=>!i.unavailable);
+  const shopNotes=[...new Set(available.map(line=>line.checkoutNote).filter(Boolean))].join(" ");
+  if(shopNotes) document.querySelector(".warning-banner p").append(" "+shopNotes);
   const amount = totalWithTax(available);
   control(buttons[1],()=>modal("Demo checkout",available.length ?
-    "Place a local pickup order for "+rupees(amount)+"? Unavailable items stay in your cart." :
+    "Place a local pickup order for "+rupees(amount)+"? "+shopNotes+" Unavailable items stay in your cart." :
     "Your cart has no available items.",available.length?[["Place demo order",()=>{
       for (const item of available) orders.unshift({...item,id:"#BMU-"+(1049+orders.length),date:new Date().toLocaleDateString()});
       save("orders",orders); save("cart",cart.filter(i=>i.unavailable)); go(pages.Orders);
