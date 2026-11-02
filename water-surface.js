@@ -1,120 +1,110 @@
-// Wrap the home screen in <water-surface>. Mark each interactive box with data-water-box.
+// A coarse height field drives optical refraction; the actual controls keep their layout.
 class WaterSurface extends HTMLElement {
-  constructor() {
-    super();
-    const shadow = this.attachShadow({ mode: "open" });
-    shadow.innerHTML = `<style>
-      :host { display: block; position: relative; isolation: isolate; }
-      canvas { position: absolute; inset: 0; width: 100%; height: 100%;
-        pointer-events: none; z-index: 10; }
-    </style><slot></slot><canvas aria-hidden="true"></canvas>`;
-    this.canvas = shadow.querySelector("canvas");
-  }
-
   connectedCallback() {
-    const canvas = this.canvas;
+    const scene = this.querySelector(".home");
+    if (!scene) return;
+    this.style.display = "block";
+    this.style.position = "relative";
+    const controller = new AbortController();
+    this.controller = controller;
+    const events = { passive: true, signal: controller.signal };
+    const motion = matchMedia("(prefers-reduced-motion: reduce)");
+    const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const controller = this.controller = new AbortController();
-    const options = { signal: controller.signal, passive: true };
-    const motion = matchMedia("(prefers-reduced-motion: reduce)");
-    const waves = [];
-    const pops = new Map();
-    let lastWake;
-    let frame;
-    let width;
-    let height;
 
-    const pop = (box, strength) => {
-      pops.get(box)?.cancel();
-      const animation = box.animate([
-        { scale: "1" }, { scale: String(1 + strength), offset: 0.35 }, { scale: "1" }
-      ], { duration: 330, easing: "ease-out" });
-      pops.set(box, animation);
-      animation.onfinish = () => pops.delete(box);
-    };
-
-    function draw(now) {
-      ctx.clearRect(0, 0, width, height);
-      for (let i = waves.length - 1; i >= 0; i--) {
-        const wave = waves[i];
-        const progress = Math.min(1, (now - wave.start) / wave.duration);
-        const radius = wave.range * progress;
-        for (const target of wave.targets) {
-          if (!target.hit && target.distance <= radius) {
-            target.hit = true;
-            pop(target.box, 0.035 * (1 - progress));
-          }
-        }
-        for (let ring = 0; ring < 3; ring++) {
-          const r = radius - ring * 9;
-          if (r <= 0) continue;
-          ctx.globalAlpha = (1 - progress) ** 2 * wave.opacity / (1 + ring);
-          for (const [offset, color] of [[0, "#287c91"], [1.6, "#fff"]]) {
-            ctx.beginPath();
-            ctx.arc(wave.x, wave.y, r + offset, 0, 2 * Math.PI);
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-          }
-        }
-        if (progress === 1) waves.splice(i, 1);
-      }
-      frame = waves.length ? requestAnimationFrame(draw) : undefined;
-    }
-
-    const disturb = (event, click) => {
-      if (motion.matches) return;
-      const rect = canvas.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const now = performance.now();
-      const box = event.target.closest?.("[data-water-box]");
-      const anchor = click && event.detail === 0 && box ? box.getBoundingClientRect() : null;
-      const x = (anchor ? anchor.left + anchor.width / 2 : event.clientX) - rect.left;
-      const y = (anchor ? anchor.top + anchor.height / 2 : event.clientY) - rect.top;
-      if (!click && lastWake && (now - lastWake.time < 50 || Math.hypot(x - lastWake.x, y - lastWake.y) < 5)) return;
-      if (!click) lastWake = { x, y, time: now };
-      width = rect.width;
-      height = rect.height;
-      const ratio = Math.min(devicePixelRatio, 2, 4096 / Math.max(width, height));
-      const pixelsX = Math.max(1, Math.round(width * ratio));
-      const pixelsY = Math.max(1, Math.round(height * ratio));
-      if (canvas.width !== pixelsX || canvas.height !== pixelsY) {
-        canvas.width = pixelsX;
-        canvas.height = pixelsY;
-        ctx.setTransform(pixelsX / width, 0, 0, pixelsY / height, 0, 0);
-      }
-      const range = click ? Math.min(600, Math.max(width, height)) : 82;
-      const targets = [];
-      for (const tile of this.querySelectorAll("[data-water-box]")) {
-        const bounds = tile.getBoundingClientRect();
-        const dx = Math.max(bounds.left - rect.left - x, x - (bounds.right - rect.left), 0);
-        const dy = Math.max(bounds.top - rect.top - y, y - (bounds.bottom - rect.top), 0);
-        const distance = Math.hypot(dx, dy);
-        if (distance < range && (click || !pops.has(tile))) targets.push({ box: tile, distance });
-      }
-      if (waves.length >= 32) waves.shift();
-      waves.push({ x, y, start: now, duration: click ? 1100 : 630, range,
-        opacity: click ? 0.7 : 0.32, targets });
-      if (frame === undefined) frame = requestAnimationFrame(draw);
-    };
-    this.addEventListener("pointermove", event => disturb(event, false), options);
-    this.addEventListener("click", event => disturb(event, true), options);
-    const clear = () => {
+    // SVG samples the live page, so text, artwork and newly rendered buttons share one surface.
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", "0");
+    svg.setAttribute("height", "0");
+    svg.setAttribute("aria-hidden", "true");
+    svg.style.position = "absolute";
+    svg.innerHTML = `<defs><filter id="campus-refraction" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feImage x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="surface"/>
+      <feDisplacementMap in="SourceGraphic" in2="surface" scale="27" xChannelSelector="R" yChannelSelector="G" result="refracted"/>
+      <feColorMatrix in="surface" values="0 0 0 0 1   0 0 0 0 0.89   0 0 0 0 0.68   0 0 0.32 0 0" result="glint"/>
+      <feComposite in="glint" in2="refracted" operator="over"/>
+    </filter></defs>`;
+    this.append(svg);
+    const map = svg.querySelector("feImage");
+    let current, previous, pixels, cols, rows, lastPoint;
+    let frame = 0, lastDraw = 0, lastInput = 0;
+    function settle() {
       cancelAnimationFrame(frame);
-      frame = undefined;
-      waves.length = 0;
-      for (const animation of pops.values()) animation.cancel();
-      pops.clear();
-      ctx.clearRect(0, 0, width || 0, height || 0);
-    };
-    motion.addEventListener("change", clear, options);
-    controller.signal.addEventListener("abort", clear);
+      frame = 0; lastDraw = 0; lastPoint = null;
+      scene.style.removeProperty("filter");
+      current?.fill(0); previous?.fill(0);
+    }
+    function prepare(rect) {
+      const cell = Math.max(5, rect.width / 240, rect.height / 560);
+      const w = Math.ceil(rect.width / cell), h = Math.ceil(rect.height / cell);
+      if (w === cols && h === rows) return;
+      settle();
+      canvas.width = cols = w; canvas.height = rows = h;
+      current = new Float32Array(w*h); previous = new Float32Array(w*h);
+      pixels = ctx.createImageData(w,h);
+      for (let i=0;i<pixels.data.length;i+=4) {
+        pixels.data[i]=pixels.data[i+1]=128; pixels.data[i+3]=255;
+      }
+    }
+    function step() {
+      for (let y=1;y<rows-1;y++) {
+        for (let i=y*cols+1,end=(y+1)*cols-1;i<end;i++) {
+          const laplacian=current[i-1]+current[i+1]+current[i-cols]+current[i+cols]-4*current[i];
+          previous[i]=current[i]+0.968*(current[i]-previous[i])+0.46*laplacian;
+        }
+      }
+      [previous,current]=[current,previous];
+    }
+    function draw(now) {
+      if (now-lastInput>1500 || motion.matches || document.hidden) {settle();return;}
+      // Bound work and simulation speed independently of high-refresh displays.
+      if (!lastDraw || now-lastDraw>=30) {
+        step();step();lastDraw=now;
+        const rgba=pixels.data;
+        for (let y=1;y<rows-1;y++) for(let i=y*cols+1,end=(y+1)*cols-1;i<end;i++) {
+          const dx=current[i-1]-current[i+1], dy=current[i-cols]-current[i+cols];
+          rgba[i*4]=128+dx*105; rgba[i*4+1]=128+dy*105;
+          rgba[i*4+2]=Math.max(0,(dx*0.65+dy*0.76)*110);
+        }
+        ctx.putImageData(pixels,0,0);
+        map.setAttribute("href",canvas.toDataURL());
+        scene.style.filter="url(#campus-refraction)";
+      }
+      frame=requestAnimationFrame(draw);
+    }
+    function disturb(e,click) {
+      if(motion.matches || document.hidden) return;
+      const rect=scene.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      prepare(rect);
+      const x=(e.clientX-rect.left)*cols/rect.width, y=(e.clientY-rect.top)*rows/rect.height;
+      const now=performance.now();
+      const from=(!click && lastPoint && now-lastInput<120) ? lastPoint : {x,y};
+      const distance=Math.hypot(x-from.x,y-from.y);
+      const count=Math.min(36,Math.max(1,Math.ceil(distance/1.5)));
+      const radius=click?4.8:2.8;
+      for(let n=1;n<=count;n++) {
+        const cx=from.x+(x-from.x)*n/count, cy=from.y+(y-from.y)*n/count;
+        for(let iy=Math.max(1,Math.floor(cy-radius));iy<=Math.min(rows-2,cy+radius);iy++)
+          for(let ix=Math.max(1,Math.floor(cx-radius));ix<=Math.min(cols-2,cx+radius);ix++) {
+            const falloff=1-((cx-ix)**2+(cy-iy)**2)/(radius*radius);
+            if(falloff>0) {
+              const i=iy*cols+ix;
+              current[i]=Math.min(3,current[i]+falloff*falloff*(click?2.3:0.48));
+            }
+          }
+      }
+      lastPoint={x,y};lastInput=now;
+      if(!frame)frame=requestAnimationFrame(draw);
+    }
+    this.addEventListener("pointermove",e=>disturb(e,false),events);
+    this.addEventListener("pointerleave",()=>{lastPoint=null;},events);
+    this.addEventListener("click",e=>{if(e.detail)disturb(e,true);},events);
+    motion.addEventListener("change",settle,events);
+    document.addEventListener("visibilitychange",settle,events);
+    controller.signal.addEventListener("abort",()=>{settle();svg.remove();});
   }
-
-  disconnectedCallback() {
-    this.controller?.abort();
-  }
+  disconnectedCallback() { this.controller?.abort(); }
 }
-
-customElements.define("water-surface", WaterSurface);
+customElements.define("water-surface",WaterSurface);
