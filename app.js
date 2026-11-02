@@ -100,6 +100,11 @@ if (page === "menu") {
   const heading=document.querySelector("#shop-title"), feedback=document.querySelector("#feedback");
   if (!menu) {heading.textContent="Shop not found";document.querySelector(".menu-tools").hidden=true;return;}
   heading.textContent=menu.shop;
+  // Shared size and crust schedules can be referenced by multiple pizzas.
+  for (const item of menu.items) {
+    item.options = (item.options || []).map(option =>
+      typeof option === "string" ? menu.optionGroups[option] : option);
+  }
   document.title=menu.shop+" menu · BMU Campus Eats";
   if (!menu.items.length) {
     feedback.textContent="Menu items haven’t been added yet.";
@@ -120,6 +125,13 @@ if (page === "menu") {
     for(const item of matches) {
       const card=document.createElement("form");card.className="menu-item";
       const name=document.createElement("h2");name.textContent=item.dish;
+      if (item.category) {
+        const section=document.createElement("small");section.textContent=item.category;card.append(section);
+      }
+      if (item.price == null) {
+        const note=document.createElement("p");note.textContent="Price awaiting confirmation";
+        card.append(name,note);items.append(card);continue;
+      }
       const status=document.createElement("small");
       const controls=(item.options || []).map(group=>{
         const wrapper=document.createElement("label");wrapper.textContent=group.label;
@@ -140,7 +152,7 @@ if (page === "menu") {
       card.onsubmit=event=>{
         event.preventDefault();
         const current=load("cart",[]);
-        const dish=[item.dish,...selections().map(choice=>choice[0])].join(" · ");
+        const dish=[...(menu.optionGroups?[item.category]:[]),item.dish,...selections().map(choice=>choice[0])].join(" · ");
         const line=current.find(row=>row.shop===menu.shop && row.dish===dish && row.price===price() && !row.unavailable);
         if (item.stock!=null && (line?.qty || 0)+qty.valueAsNumber>item.stock) {feedback.textContent="Only "+item.stock+" available, including any already in your cart.";return;}
         if(line) {line.qty+=qty.valueAsNumber;line.limit=item.stock;}
