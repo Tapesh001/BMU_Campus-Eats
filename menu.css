@@ -1,5 +1,5 @@
 .menu-page { padding:16px 5% 40px; max-width:1440px; margin:auto }
-.menu-page header { margin:10px 0 14px; background:#0b3c35; color:white; padding:14px 20px; border-radius:16px }
+.menu-page header { margin:10px 0 14px; background:var(--espresso); color:var(--on-dark); padding:14px 20px; border-radius:16px }
 .menu-page h1 { font-size:clamp(28px,4vw,38px); margin:4px 0 0 }
 .menu-tools { max-width:560px; display:grid; align-items:center; gap:6px 14px; font-weight:600 }
 .menu-tools > label[for=search] { grid-column:1 }
@@ -13,9 +13,9 @@
   .menu-tools { grid-template-columns:minmax(0,1fr) minmax(0,1fr) }
 }
 #items { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr)); gap:18px; margin-bottom:24px }
-.menu-item { display:grid; align-content:start; gap:14px; padding:24px; background:white; border:1px solid #d9ddd8; border-radius:14px }
-.menu-item small { color:#0b3c35; font-weight:700 }
+.menu-item { display:grid; align-content:start; gap:14px; padding:24px; background:var(--surface); border:1px solid var(--line); border-radius:14px }
+.menu-item small { color:var(--paprika); font-weight:700 }
 .menu-item input { max-width:70px; margin-left:10px }
-.menu-item button:disabled { background:#e5e8e4; color:#57615b; cursor:default }
-.menu-item select,.menu-tools select { max-width:100%; margin:4px 0; padding:8px; border:1px solid #ccd5ce; border-radius:6px; background:white }
+.menu-item button:disabled { background:var(--disabled); color:var(--muted); cursor:default }
+.menu-item select,.menu-tools select { max-width:100%; margin:4px 0; padding:8px; border:1px solid var(--field-line); border-radius:6px; background:var(--surface) }
 .menu-item select { display:block; width:100% }
