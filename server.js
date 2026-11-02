@@ -83,4 +83,7 @@ app.get(/^\/(?:[a-z][a-z-]*\.(?:html|css|js))?$/,(req,res)=>{
   res.sendFile(path.join(__dirname,name));
 });
 app.use((err,req,res,next)=>res.status(err.status || 500).json({error:err.status===400?"Invalid submission.":"Request could not be completed."}));
-app.listen(Number(process.env.PORT || 3000),"127.0.0.1",()=>console.log("Campus Eats ready on port",process.env.PORT || 3000));
+app.listen(Number(process.env.PORT || 3000),"127.0.0.1",error=>{
+  if (error) throw error;
+  console.log("Campus Eats ready on port",process.env.PORT || 3000);
+});

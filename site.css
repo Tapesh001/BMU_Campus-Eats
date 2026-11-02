@@ -25,19 +25,10 @@ a { text-decoration:none }
 a:hover { text-decoration:underline }
 :focus-visible { outline:3px solid #dc910c; outline-offset:2px }
 main > div, water-surface { min-height:100svh }
-.campus-backdrop { min-height:100svh; padding:20px 12px }
-.login-modal { max-width:100% }
-.input input { width:100%; background:transparent; height:100%; font-size:14px }
-.hero-copy { width:min(760px,62%) }
-.hero-illustration { width:min(360px,32%) }
-[data-name="Detailed shop grid"] { column-gap:min(22px,1.5vw) }
-[data-name="Detailed shop card"] { max-width:32.1% }
-[data-name="Detailed shop card"]:first-child { max-width:29% }
 [data-name$=" content"] { padding-inline:5% }
 [data-name="Top navigation"],.footer { padding-inline:4.45% }
 [data-name="Cart table"],[data-name="Orders table"] { overflow-x:auto }
 [data-name="Table header"],[data-name="Table row"],[data-name="Order row"] { display:grid; grid-template-columns:1fr 1.8fr 1fr 1fr 1.5fr; min-width:690px }
-[data-name="Orders table"] > div { grid-template-columns:1fr 1.25fr 1fr 1fr 1fr }
 [data-name="Table cell"] { width:auto }
 .action { cursor:pointer }
 .action:hover { filter:brightness(.94) }
@@ -47,7 +38,6 @@ dialog h2 { margin-bottom:12px }
 dialog p { margin-bottom:14px; line-height:1.5 }
 dialog button { background:#0b3c35; color:white; border-radius:6px; padding:10px 14px; margin:8px 8px 0 0 }
 dialog input { border:1px solid #adbcb6; border-radius:6px; padding:10px; width:100%; margin-bottom:8px }
-[data-name="Steps row"],[data-name^="Benefits row"] { overflow:visible }
 @media(max-width:900px) {
   [data-name="Top navigation"] { height:auto; padding-block:14px; gap:12px; flex-wrap:wrap }
   [data-name="Navigation links"] { flex-wrap:wrap; gap:16px }

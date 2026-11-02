@@ -50,6 +50,11 @@ function modal(heading, message, actions = []) {
 }
 for (const node of all('.navigation-links > p,.footer-links > p')) {
   const label = title(node);
+  if (label === "Login" && student) {
+    node.textContent = "Sign out";
+    control(node,async()=>{const res=await fetch("/api/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});if(res.ok) go(pages.Home);});
+    continue;
+  }
   control(node, () => modal(label,"This preview supports student ordering only."), pages[label]);
 }
 if (page === "login") {
@@ -128,6 +133,7 @@ if (page === "menu") {
   search.addEventListener("input",render);render();
 }
 if (page === "cart") {
+  document.querySelector(".cart-content > p:nth-of-type(2)").textContent = cart.length ? "Cart items" : "Your cart is empty";
   const table = document.querySelector(named("Cart table"));
   const rows = all(named("Table row"),table);
   const templates = rows.map(row=>row.cloneNode(true));
@@ -158,12 +164,20 @@ if (page === "cart") {
 if (page === "orders") {
   const table = document.querySelector(named("Orders table"));
   const first = table.querySelector(named("Order row"));
+  const sampleRows = all(named("Order row"),table);
   for (const item of orders) {
     const row = first.cloneNode(true);
     const cells = all(named("Table cell")+" p",row);
     [item.id,item.shop,item.date].forEach((v,i)=>{cells[i].textContent=v;});
     row.dataset.details = item.qty+" × "+item.dish+" · ₹"+item.qty*item.price;
     table.insertBefore(row,first);
+  }
+  if(student) {
+    sampleRows.forEach(row=>row.remove());
+    if (!orders.length) {
+      const empty=document.createElement("p");empty.textContent="Your orders will appear here after checkout.";
+      table.after(empty);
+    }
   }
   for (const row of all(named("Order row"),table)) {
     const [id,shop,date,status] = all(named("Table cell")+" p",row).map(title);
