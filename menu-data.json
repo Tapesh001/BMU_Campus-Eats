@@ -2,87 +2,31 @@
   {
     "shop": "Kathi Junction",
     "closed": false,
-    "items": [
-      {
-        "dish": "Paneer kathi roll",
-        "price": 120,
-        "stock": 12
-      }
-    ]
+    "items": []
   },
   {
     "shop": "Greenox",
     "closed": false,
-    "items": [
-      {
-        "dish": "Protein power bowl",
-        "price": 210,
-        "stock": 6
-      }
-    ]
+    "items": []
   },
   {
     "shop": "Domino's",
     "closed": true,
-    "items": [
-      {
-        "dish": "Margherita pizza",
-        "price": 199,
-        "stock": 0
-      }
-    ]
+    "items": []
   },
   {
     "shop": "Burger Singh",
     "closed": false,
-    "items": [
-      {
-        "dish": "Veg burger",
-        "price": 99,
-        "stock": 8
-      }
-    ]
+    "items": []
   },
   {
     "shop": "Maggie Point",
     "closed": false,
-    "items": [
-      {
-        "dish": "Masala noodles",
-        "price": 60,
-        "stock": 9
-      }
-    ]
+    "items": []
   },
   {
     "shop": "Tuck Shop",
     "closed": false,
-    "items": [
-      {
-        "dish": "Campus snack box",
-        "price": 75,
-        "stock": 4
-      },
-      {
-        "dish": "Bottled water",
-        "price": 20,
-        "stock": 12
-      },
-      {
-        "dish": "Masala chips",
-        "price": 20,
-        "stock": 0
-      },
-      {
-        "dish": "Chocolate biscuits",
-        "price": 30,
-        "stock": 6
-      },
-      {
-        "dish": "Iced tea",
-        "price": 50,
-        "stock": 0
-      }
-    ]
+    "items": []
   }
 ]

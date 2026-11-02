@@ -8,14 +8,10 @@ const all = (selector, root = document) => [...root.querySelectorAll(selector)];
 const title = node => node.textContent.trim();
 const pages = { Home:"index.html", Shops:"shops.html", Cart:"cart.html", Orders:"orders.html", Login:"login.html", Profile:"profile.html" };
 const go = path => location.assign(path);
-const sampleCart = [
-  {shop:"Kathi Junction", dish:"Paneer kathi roll", price:120, qty:2},
-  {shop:"Greenox", dish:"Protein power bowl", price:210, qty:1, unavailable:true}
-];
 
 const load = (key, fallback) => JSON.parse(localStorage.getItem(storagePrefix+key) || "null") ?? fallback;
 const save = (key, value) => localStorage.setItem(storagePrefix+key, JSON.stringify(value));
-const cart = load("cart", student ? [] : sampleCart);
+const cart = load("cart", []);
 const orders = load("orders", []);
 
 function control(node, action, href) {
@@ -103,6 +99,11 @@ if (page === "menu") {
   if (!menu) {heading.textContent="Shop not found";document.querySelector(".menu-tools").hidden=true;return;}
   heading.textContent=menu.shop;
   document.title=menu.shop+" menu · BMU Campus Eats";
+  if (!menu.items.length) {
+    feedback.textContent="Menu items haven’t been added yet.";
+    document.querySelector(".menu-tools").hidden=true;
+    return;
+  }
   const search=document.querySelector("#search"), items=document.querySelector("#items");
   function render() {
     items.replaceChildren();
@@ -121,7 +122,7 @@ if (page === "menu") {
       card.append(name,status,label,add);items.append(card);
       card.onsubmit=event=>{
         event.preventDefault();
-        const current=load("cart",student?[]:sampleCart);
+        const current=load("cart",[]);
         const line=current.find(row=>row.shop===menu.shop && row.dish===item.dish && !row.unavailable);
         if ((line?.qty || 0)+qty.valueAsNumber>item.stock) {feedback.textContent="Only "+item.stock+" available, including any already in your cart.";return;}
         if(line) {line.qty+=qty.valueAsNumber;line.limit=item.stock;}
