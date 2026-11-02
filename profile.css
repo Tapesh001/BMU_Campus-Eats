@@ -1,4 +1,29 @@
-.account-wrap { padding-block:48px }
-#profile { grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr)) }
-#profile button { grid-column:1/-1 }
-#logout { color:#0b3c35; background:transparent; text-decoration:underline }
+.profile-page { max-width:1192px; margin:auto; padding:48px 32px 72px }
+.profile-page .kicker,.profile-page small { font-size:11px; letter-spacing:.12em; font-weight:750 }
+.profile-page .kicker { color:#526b60 }
+.profile-page h1 { margin:10px 0 28px; color:#0b3c35; font-size:clamp(36px,5vw,48px); letter-spacing:-.045em }
+.profile-grid { display:grid; grid-template-columns:minmax(230px,1fr) minmax(0,2fr); gap:24px; align-items:start }
+.campus-pass,.details,.history { border-radius:20px; padding:32px }
+.campus-pass { background:#0b3c35; color:white; border-top:6px solid #d97706 }
+.campus-pass small { color:#cde1d6 }
+#initials { margin:28px 0 16px; width:72px; height:72px; border-radius:50%; display:grid; place-items:center; background:#e4efea; color:#0b3c35; font-size:24px; font-weight:bold }
+.campus-pass h2 { overflow-wrap:anywhere; font-size:26px }
+#membership { margin-top:8px; color:#d6e7de; font-size:14px }
+.pass-id { margin-top:30px; border-top:1px solid #467067; padding-top:16px; display:grid; gap:8px; overflow-wrap:anywhere }
+.details,.history { background:white; border:1px solid #d9ddd8 }
+.details header,.edit-actions,#guest-links { display:flex; align-items:center; gap:16px; flex-wrap:wrap }
+.details header { justify-content:space-between; border-bottom:1px solid #d9ddd8; padding-bottom:20px }
+.details button,.primary,#logout { border-radius:6px; padding:10px 16px; font-weight:600; background:#e4efea; color:#0b3c35 }
+.primary,.details button[type=submit] { background:#0b3c35; color:white }
+#summary,#profile { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; margin:24px 0 0 }
+#summary:empty,[role=status]:empty { display:none }
+dt,#profile label { font-size:13px; color:#536a60 }
+dd { margin:6px 0 0; font-weight:600; overflow-wrap:anywhere }
+#profile input,#profile select { width:100%; margin-top:8px; padding:12px; background:white; border:1px solid #aebfb5; border-radius:6px }
+.edit-actions { grid-column:1/-1 }
+.details [role=status] { color:#526b60; margin:20px 0 }
+#member-links { margin-top:24px; display:grid; gap:18px; justify-items:start }
+.history { width:100%; display:flex; justify-content:space-between; align-items:center; color:#0b3c35 }
+.history strong { display:block; font-size:22px; margin-top:8px }
+[aria-current=page] { text-decoration:underline; text-underline-offset:5px }
+@media(max-width:700px){.profile-page{padding:28px 16px}.profile-grid,#summary,#profile{grid-template-columns:1fr}.campus-pass,.details,.history{padding:24px}}
