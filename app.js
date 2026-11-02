@@ -82,7 +82,6 @@ if (page === "login") {
       location.assign("profile.html");
     } catch(e){status.textContent=e.message;} finally {submit.disabled=false;}
   };
-  control(form.lastElementChild,null,"register.html");
 }
 if (page === "home") control(document.querySelector(named("Button")),null,pages.Shops);
 if (page === "shops") {
