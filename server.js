@@ -46,6 +46,7 @@ app.use("/api",express.json({limit:"8kb"}),(req,res,next)=>{
   else sessions.delete(req.token);
   next();
 });
+app.get("/api/menus",(req,res)=>res.sendFile(path.join(__dirname,"menu-data.json")));
 app.post("/api/register",async(req,res)=>{
   const p=clean(req.body), error=validate(p), password=req.body.password;
   if (error || typeof password!=="string" || password.length<8 || password.length>128)

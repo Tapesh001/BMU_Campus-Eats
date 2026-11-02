@@ -1,0 +1,10 @@
+.menu-page { padding:40px 5%; max-width:1440px; margin:auto }
+.menu-page header { margin:24px 0; background:#0b3c35; color:white; padding:32px; border-radius:20px }
+.menu-page h1 { font-size:clamp(32px,5vw,48px); margin:12px 0 }
+.menu-tools { max-width:500px; display:grid; gap:8px; font-weight:600 }
+#feedback { margin:18px 0 }
+#items { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr)); gap:18px; margin-bottom:24px }
+.menu-item { display:grid; align-content:start; gap:14px; padding:24px; background:white; border:1px solid #d9ddd8; border-radius:14px }
+.menu-item small { color:#0b3c35; font-weight:700 }
+.menu-item input { max-width:70px; margin-left:10px }
+.menu-item button:disabled { background:#e5e8e4; color:#57615b; cursor:default }

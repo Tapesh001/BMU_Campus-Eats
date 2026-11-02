@@ -12,11 +12,7 @@ const sampleCart = [
   {shop:"Kathi Junction", dish:"Paneer kathi roll", price:120, qty:2},
   {shop:"Greenox", dish:"Protein power bowl", price:210, qty:1, unavailable:true}
 ];
-const menu = {
-  "Kathi Junction":["Paneer kathi roll",120], Greenox:["Protein power bowl",210],
-  "Domino's":["Margherita pizza",199], "Burger Singh":["Veg burger",99],
-  "Maggie Point":["Masala noodles",60], "Tuck Shop":["Campus snack box",75]
-};
+
 const load = (key, fallback) => JSON.parse(localStorage.getItem(storagePrefix+key) || "null") ?? fallback;
 const save = (key, value) => localStorage.setItem(storagePrefix+key, JSON.stringify(value));
 const cart = load("cart", student ? [] : sampleCart);
@@ -91,16 +87,45 @@ if (page === "home") control(document.querySelector(named("Button")),null,pages.
 if (page === "shops") {
   for (const card of all(named("Detailed shop card"))) {
     const shop = title(card.querySelector(named("Shop heading")+" > p"));
-    const [dish,price] = menu[shop];
-    const closed = card.querySelector(named("Shop heading")).textContent.includes("CLOSED");
-    control(card.querySelector(named("Button")),()=>modal(shop, dish+" · ₹"+price+(closed?" · Closed":""),closed?[]:[
-      ["Add to cart",()=>{
-        const item = cart.find(row=>row.shop===shop && !row.unavailable);
-        if (item) item.qty++; else cart.push({shop,dish,price,qty:1});
-        save("cart",cart); go(pages.Cart);
-      }]
-    ]));
+    control(card.querySelector(named("Button")),null,"menu.html?shop="+encodeURIComponent(shop));
   }
+}
+if (page === "menu") {
+  const catalog = await (await fetch("/api/menus")).json();
+  const selected = new URLSearchParams(location.search).get("shop") || "Tuck Shop";
+  const menu = catalog.find(entry=>entry.shop===selected);
+  const heading=document.querySelector("#shop-title"), feedback=document.querySelector("#feedback");
+  if (!menu) {heading.textContent="Shop not found";document.querySelector(".menu-tools").hidden=true;return;}
+  heading.textContent=menu.shop;
+  document.title=menu.shop+" menu · BMU Campus Eats";
+  const search=document.querySelector("#search"), items=document.querySelector("#items");
+  function render() {
+    items.replaceChildren();
+    const matches=menu.items.filter(item=>item.dish.toLowerCase().includes(search.value.trim().toLowerCase()));
+    feedback.textContent=matches.length ? matches.length+" matching item"+(matches.length===1?"":"s") : "No matching item found.";
+    for(const item of matches) {
+      const card=document.createElement("form");card.className="menu-item";
+      const name=document.createElement("h2");name.textContent=item.dish;
+      const status=document.createElement("small");
+      status.textContent="₹"+item.price+" · "+(menu.closed?"Shop closed":item.stock?item.stock+" available":"Out of stock");
+      const label=document.createElement("label");label.textContent="Quantity";
+      const qty=document.createElement("input");qty.type="number";qty.required=true;qty.min=1;qty.max=item.stock;qty.value=1;
+      label.append(qty);
+      const add=document.createElement("button"); add.disabled=menu.closed || item.stock===0;
+      qty.disabled=add.disabled; add.textContent=menu.closed?"Shop closed":item.stock?"Add to cart":"Out of stock";
+      card.append(name,status,label,add);items.append(card);
+      card.onsubmit=event=>{
+        event.preventDefault();
+        const current=load("cart",student?[]:sampleCart);
+        const line=current.find(row=>row.shop===menu.shop && row.dish===item.dish && !row.unavailable);
+        if ((line?.qty || 0)+qty.valueAsNumber>item.stock) {feedback.textContent="Only "+item.stock+" available, including any already in your cart.";return;}
+        if(line) {line.qty+=qty.valueAsNumber;line.limit=item.stock;}
+        else current.push({shop:menu.shop,dish:item.dish,price:item.price,qty:qty.valueAsNumber,limit:item.stock});
+        save("cart",current);feedback.textContent="Added "+qty.value+" × "+item.dish+" to your cart.";
+      };
+    }
+  }
+  search.addEventListener("input",render);render();
 }
 if (page === "cart") {
   const table = document.querySelector(named("Cart table"));
@@ -112,7 +137,7 @@ if (page === "cart") {
     const cells = all(named("Table cell")+" p",row);
     [item.shop,item.dish,item.qty,"₹"+item.price*item.qty].forEach((v,i)=>{cells[i].textContent=v;});
     const edit = control(cells[2],()=>modal(item.dish,"Quantity: "+item.qty,[
-      ["Add one",()=>{item.qty++;save("cart",cart);location.reload();}],
+      ["Add one",()=>{if(item.unavailable || item.qty >= (item.limit ?? Infinity)){modal(item.dish,"No more units available.");return;}item.qty++;save("cart",cart);location.reload();}],
       ["Remove one",()=>{if (--item.qty===0) cart.splice(index,1);save("cart",cart);location.reload();}]
     ]));
     edit.style.background = "transparent"; edit.setAttribute("aria-label","Change quantity for "+item.dish);
