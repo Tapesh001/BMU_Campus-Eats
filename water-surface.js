@@ -21,8 +21,8 @@ class WaterSurface extends HTMLElement {
     svg.style.position = "absolute";
     svg.innerHTML = `<defs><filter id="campus-refraction" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
       <feImage x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="surface"/>
-      <feDisplacementMap in="SourceGraphic" in2="surface" scale="27" xChannelSelector="R" yChannelSelector="G" result="refracted"/>
-      <feColorMatrix in="surface" values="0 0 0 0 1   0 0 0 0 0.89   0 0 0 0 0.68   0 0 0.32 0 0" result="glint"/>
+      <feDisplacementMap in="SourceGraphic" in2="surface" scale="18" xChannelSelector="R" yChannelSelector="G" result="refracted"/>
+      <feColorMatrix in="surface" values="0 0 0 0 1   0 0 0 0 0.89   0 0 0 0 0.68   0 0 0.21 0 0" result="glint"/>
       <feComposite in="glint" in2="refracted" operator="over"/>
     </filter></defs>`;
     this.append(svg);
