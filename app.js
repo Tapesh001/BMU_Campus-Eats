@@ -157,7 +157,7 @@ if (page === "menu") {
         if (item.stock!=null && (line?.qty || 0)+qty.valueAsNumber>item.stock) {feedback.textContent="Only "+item.stock+" available, including any already in your cart.";return;}
         if(line) {line.qty+=qty.valueAsNumber;line.limit=item.stock;}
         else current.push({shop:menu.shop,dish,price:price(),qty:qty.valueAsNumber,limit:item.stock,taxPercent:menu.taxPercent || 0,checkoutNote:menu.checkoutNote});
-        save("cart",current);feedback.textContent="Added "+qty.value+" × "+item.dish+" to your cart.";
+        save("cart",current);window.campusCartFeedback?.(add,item.dish,current.reduce((sum,row)=>sum+row.qty,0));feedback.textContent="Added "+qty.value+" × "+item.dish+" to your cart.";
       };
     }
   }
