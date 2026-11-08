@@ -1,12 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap");
 :root {
-  --cream: #fff5e7;
-  --surface: #fffcf6;
+  --cream: #F8EFE3;
+  --surface: #FFFFFF;
   --oat: #fff1dc;
-  --peach: #f9dec4;
-  --espresso: #36221c;
-  --muted: #6e5345;
+  --peach: #E9CBAA;
+  --espresso: #321C18;
+  --muted: #70645D;
   --paprika: #98351f;
-  --tomato: #b33e26;
+  --tomato: #B94B32;
   --on-dark: #fffaf0;
   --on-dark-muted: #f4dfcd;
   --line: #decab4;
@@ -32,7 +33,7 @@
 .wordmark small,.eyebrow { font-size:11px; font-weight:800; letter-spacing:.06em }
 .wordmark small { background:var(--paprika); border-radius:30px; padding:6px 10px }
 .account-wrap { max-width:730px; margin:auto; padding-inline:20px }
-.account-card { background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:clamp(24px,4vw,46px); box-shadow:0 12px 32px #36221c10 }
+.account-card { background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:clamp(24px,4vw,46px); box-shadow:0 12px 32px #321C1810 }
 .account-card h1 { margin:10px 0; font-size:34px }
 .account-card p { color:var(--muted); margin-bottom:16px }
 .account-card form { display:grid; gap:18px; margin:24px 0 }
@@ -40,7 +41,7 @@
 .account-card input,.account-card select,.menu-tools input,.menu-item input { width:100%; padding:12px; border:1px solid var(--field-line); border-radius:6px; background:var(--surface) }
 .account-card form button,.menu-item button { background:var(--tomato); color:var(--on-dark); border-radius:6px; padding:12px 18px; font-weight:700 }
 .account-card a { color:var(--paprika); text-decoration:underline }
-body { margin:0; font-family:Inter,Arial,sans-serif; color:var(--espresso); background:var(--cream) }
+body { margin:0; font-family:Poppins,Arial,sans-serif; color:var(--espresso); background:var(--cream) }
 p,h1,h2,h3 { margin:0 }
 button,a,input,select { font:inherit; color:inherit }
 button,a { cursor:pointer }
@@ -58,8 +59,8 @@ main > div[data-name], water-surface { min-height:100svh }
 [data-name="Table cell"] { width:auto }
 .action { cursor:pointer }
 .action:hover { filter:brightness(.94) }
-dialog { background:var(--surface); width:min(390px,92vw); border:1px solid var(--line); border-radius:16px; padding:28px; color:var(--espresso); box-shadow:0 18px 80px #36221c40 }
-dialog::backdrop { background:#36221caa }
+dialog { background:var(--surface); width:min(390px,92vw); border:1px solid var(--line); border-radius:16px; padding:28px; color:var(--espresso); box-shadow:0 18px 80px #321C1840 }
+dialog::backdrop { background:#321C18aa }
 dialog h2 { margin-bottom:12px }
 dialog p { margin-bottom:14px; line-height:1.5 }
 dialog button { background:var(--tomato); color:var(--on-dark); border-radius:6px; padding:10px 14px; margin:8px 8px 0 0 }
@@ -87,3 +88,5 @@ dialog input { border:1px solid var(--field-line); border-radius:6px; padding:10
 
 input::placeholder { color:var(--muted); opacity:1 }
 [role=alert],.login-modal [role=status],#register ~ [role=status] { color:var(--error) }
+
+h1,.element-19,.element-23,.element-28,.element-36 { font-family:"Playfair Display",Georgia,serif; }

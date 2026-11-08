@@ -11,6 +11,13 @@ const go = path => location.assign(path);
 
 const load = (key, fallback) => JSON.parse(localStorage.getItem(storagePrefix+key) || "null") ?? fallback;
 const save = (key, value) => localStorage.setItem(storagePrefix+key, JSON.stringify(value));
+if (student) {
+  const guestCart = JSON.parse(localStorage.getItem('bmu.cart') || '[]');
+  if (guestCart.length) {
+    save('cart', [...load('cart', []), ...guestCart]);
+    localStorage.removeItem('bmu.cart');
+  }
+}
 const cart = load("cart", []);
 const orders = load("orders", []);
 const rupees = value => "₹" + Number(value.toFixed(2)).toLocaleString("en-IN",{maximumFractionDigits:2});
@@ -156,7 +163,7 @@ if (page === "menu") {
         const line=current.find(row=>row.shop===menu.shop && row.dish===dish && row.price===price() && !row.unavailable);
         if (item.stock!=null && (line?.qty || 0)+qty.valueAsNumber>item.stock) {feedback.textContent="Only "+item.stock+" available, including any already in your cart.";return;}
         if(line) {line.qty+=qty.valueAsNumber;line.limit=item.stock;}
-        else current.push({shop:menu.shop,dish,price:price(),qty:qty.valueAsNumber,limit:item.stock,taxPercent:menu.taxPercent || 0,checkoutNote:menu.checkoutNote});
+        else current.push({shop:menu.shop,baseDish:item.dish,selections:controls.map(control=>control.select.selectedIndex),dish,price:price(),qty:qty.valueAsNumber,limit:item.stock,taxPercent:menu.taxPercent || 0,checkoutNote:menu.checkoutNote});
         save("cart",current);window.campusCartFeedback?.(add,item.dish,current.reduce((sum,row)=>sum+row.qty,0));feedback.textContent="Added "+qty.value+" × "+item.dish+" to your cart.";
       };
     }
@@ -173,11 +180,35 @@ if (page === "cart") {
     const row = templates[Number(!!item.unavailable)].cloneNode(true);
     const cells = all(named("Table cell")+" p",row);
     [item.shop,item.dish,item.qty,"₹"+item.price*item.qty].forEach((v,i)=>{cells[i].textContent=v;});
-    const edit = control(cells[2],()=>modal(item.dish,"Quantity: "+item.qty,[
-      ["Add one",()=>{if(item.unavailable || item.qty >= (item.limit ?? Infinity)){modal(item.dish,"No more units available.");return;}item.qty++;save("cart",cart);location.reload();}],
-      ["Remove one",()=>{if (--item.qty===0) cart.splice(index,1);save("cart",cart);location.reload();}]
-    ]));
-    edit.style.background = "transparent"; edit.setAttribute("aria-label","Change quantity for "+item.dish);
+    const quantity = document.createElement("div");
+    quantity.className = "cart-quantity";
+    const count = document.createElement("span");
+    count.textContent = item.qty;
+    count.setAttribute("aria-live", "polite");
+    function changeQuantity(delta) {
+      if (delta > 0 && (item.unavailable || item.qty >= (item.limit ?? 99))) return;
+      item.qty += delta;
+      if (item.qty <= 0) { cart.splice(cart.indexOf(item), 1); row.remove(); }
+      else { count.textContent = item.qty; cells[3].textContent = rupees(item.price * item.qty); }
+      save("cart", cart);
+      document.querySelector(".checkout-summary > p").textContent = "Total " + rupees(totalWithTax(cart));
+      document.querySelector(".cart-content > p:nth-of-type(2)").textContent = cart.length ? "Cart items" : "Your cart is empty";
+      if (!cart.length) { checkoutButton.removeAttribute("href"); checkoutButton.setAttribute("aria-disabled", "true"); }
+    }
+    for (const [label, delta] of [["−", -1], ["+", 1]]) {
+      const button = document.createElement("button");
+      button.textContent = label;
+      button.setAttribute("aria-label", (delta > 0 ? "Increase " : "Decrease ") + item.dish);
+      button.onclick = () => changeQuantity(delta);
+      quantity.append(button);
+      if (delta < 0) quantity.append(count);
+    }
+    cells[2].replaceWith(quantity);
+    const remove = document.createElement("button");
+    remove.textContent = "Remove";
+    remove.className = "remove-item";
+    remove.onclick = () => changeQuantity(-item.qty);
+    cells[1].parentElement.append(remove);
     table.append(row);
   });
   const buttons = all(named("Button"));
@@ -188,14 +219,21 @@ if (page === "cart") {
   const shopNotes=[...new Set(available.map(line=>line.checkoutNote).filter(Boolean))].join(" ");
   if(shopNotes) document.querySelector(".warning-banner p").append(" "+shopNotes);
   const amount = totalWithTax(available);
-  control(buttons[1],()=>modal("Demo checkout",available.length ?
-    "Place a local pickup order for "+rupees(amount)+"? "+shopNotes+" Unavailable items stay in your cart." :
-    "Your cart has no available items.",available.length?[["Place demo order",()=>{
-      for (const item of available) orders.unshift({...item,id:"#BMU-"+(1049+orders.length),date:new Date().toLocaleDateString()});
-      save("orders",orders); save("cart",cart.filter(i=>i.unavailable)); go(pages.Orders);
-    }]]:[]));
+  const checkoutButton = control(buttons[1], null, student ? "checkout.html" : "login.html");
+  if (!available.length) { checkoutButton.removeAttribute("href"); checkoutButton.setAttribute("aria-disabled", "true"); }
+
 }
 if (page === "orders") {
+  if (student) {
+    const response = await fetch("/api/orders");
+    if (!response.ok) throw new Error("Could not load orders");
+    const savedOrders = await response.json();
+    for (const order of savedOrders.reverse()) {
+      orders.unshift({ id:order.id, shop:[...new Set(order.items.map(item=>item.shop))].join(", "),
+        date:new Date(order.created).toLocaleDateString(), serverOrder:true, status:order.status,
+        details:order.items.map(item=>item.qty+" × "+item.dish).join(", ")+" · "+rupees(order.total/100) });
+    }
+  }
   const table = document.querySelector(named("Orders table"));
   const first = table.querySelector(named("Order row"));
   const sampleRows = all(named("Order row"),table);
@@ -203,10 +241,11 @@ if (page === "orders") {
     const row = first.cloneNode(true);
     const cells = all(named("Table cell")+" p",row);
     [item.id,item.shop,item.date].forEach((v,i)=>{cells[i].textContent=v;});
-    row.dataset.details = item.qty+" × "+item.dish+" · "+rupees(totalWithTax([item]))+(lineTax(item)?" including GST":"");
+    if(item.serverOrder) { row.dataset.orderId=item.id; cells[3].textContent=item.status; row.dataset.details=item.details; }
+    else row.dataset.details = item.qty+" × "+item.dish+" · "+rupees(totalWithTax([item]))+(lineTax(item)?" including GST":"");
     table.insertBefore(row,first);
   }
-  if(student) {
+  {
     sampleRows.forEach(row=>row.remove());
     if (!orders.length) {
       const empty=document.createElement("p");empty.textContent="Your orders will appear here after checkout.";
@@ -215,8 +254,8 @@ if (page === "orders") {
   }
   for (const row of all(named("Order row"),table)) {
     const [id,shop,date,status] = all(named("Table cell")+" p",row).map(title);
-    control(row.querySelector(named("Button")),()=>modal(id,[shop,date,status,row.dataset.details].filter(Boolean).join(" · ")));
+    control(row.querySelector(named("Button")),()=>modal(id,[shop,date,status,row.dataset.details].filter(Boolean).join(" · ")),row.dataset.orderId ? "tracking.html?id="+encodeURIComponent(row.dataset.orderId) : undefined);
   }
 }
 }
-startCampusPage().catch(()=>{const error=document.createElement("p");error.setAttribute("role","alert");error.textContent="Campus Eats could not connect. Start the Express server and reload.";document.body.prepend(error);});
+window.campusReady = startCampusPage().catch(()=>{const error=document.createElement("p");error.setAttribute("role","alert");error.textContent="Campus Eats could not connect. Start the Express server and reload.";document.body.prepend(error);});

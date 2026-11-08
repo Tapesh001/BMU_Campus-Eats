@@ -4,6 +4,7 @@ const path = require("node:path");
 const os = require("node:os");
 const crypto = require("node:crypto");
 const scrypt = require("node:util").promisify(crypto.scrypt);
+if (fs.existsSync(path.join(__dirname, '.env'))) process.loadEnvFile(path.join(__dirname, '.env'));
 
 const app = express();
 const directory = process.env.BMU_DATA_DIR || path.join(os.homedir(), ".bmu-campus-eats");
@@ -46,7 +47,7 @@ app.use("/api",express.json({limit:"8kb"}),(req,res,next)=>{
   else sessions.delete(req.token);
   next();
 });
-app.get("/api/menus",(req,res)=>res.sendFile(path.join(__dirname,"menu-data.json")));
+app.get("/api/menus",(req,res)=>res.json(commerce.catalog()));
 app.post("/api/register",async(req,res)=>{
   const p=clean(req.body), error=validate(p), password=req.body.password;
   if (error || typeof password!=="string" || password.length<8 || password.length>128)
@@ -76,14 +77,15 @@ app.put("/api/profile",(req,res)=>{
   const updated={...req.student,...p};
   persist(students.map(s=>s.id===updated.id ? updated : s)); res.json(publicProfile(updated));
 });
+const commerce = require('./commerce')(app, directory, students);
 app.use("/assets",express.static(path.join(__dirname,"assets")));
 app.get(/^\/(?:[a-z][a-z-]*\.(?:html|css|js))?$/,(req,res)=>{
   const name=req.path.slice(1) || "index.html";
-  if(name==="server.js") return res.sendStatus(404);
+  if(["server.js", "commerce.js"].includes(name)) return res.sendStatus(404);
   res.sendFile(path.join(__dirname,name));
 });
-app.use((err,req,res,next)=>res.status(err.status || 500).json({error:err.status===400?"Invalid submission.":"Request could not be completed."}));
-app.listen(Number(process.env.PORT || 3000),"127.0.0.1",error=>{
+app.use((err,req,res,next)=>res.status(err.status || 500).json({error:err.status===400?err.message:"Request could not be completed."}));
+app.listen(Number(process.env.PORT || 8765),process.env.HOST || "0.0.0.0",error=>{
   if (error) throw error;
-  console.log("Campus Eats ready on port",process.env.PORT || 3000);
+  console.log("Campus Eats ready on port",process.env.PORT || 8765);
 });
