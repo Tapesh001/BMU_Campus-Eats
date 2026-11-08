@@ -75,7 +75,7 @@ async function startCheckout() {
         });
         localStorage.setItem(cartKey, '[]');
         sessionStorage.removeItem(pendingKey);
-        location.assign('tracking.html?id=' + encodeURIComponent(order.id));
+        location.assign('tracking.html?id=' + encodeURIComponent(order.id) + '&confirmed=1');
       } catch (error) {
         status.textContent = error.message;
         button.disabled = false;

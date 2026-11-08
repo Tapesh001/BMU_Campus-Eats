@@ -34,6 +34,16 @@ async function refreshOrder() {
     }
     document.querySelector('#order-total').textContent = 'Total ₹' + (order.total / 100).toLocaleString('en-IN');
     document.querySelector('#payment-status').textContent = order.payment;
+    if (new URLSearchParams(location.search).has('confirmed') && !document.querySelector('#order-confirmation')) {
+      const confirmation = document.createElement('p');
+      confirmation.id = 'order-confirmation';
+      confirmation.setAttribute('role', 'status');
+      confirmation.textContent = '✓ Demo order saved. Pay when you collect at the shop.';
+      document.querySelector('#order-detail').prepend(confirmation);
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        confirmation.animate([{ opacity: 0, transform: 'translateY(5px)' }, { opacity: 1, transform: 'none' }], { duration: 450 });
+      }
+    }
     if (!document.querySelector('#reorder')) {
       const button = document.createElement('button');
       button.id = 'reorder'; button.textContent = 'Reorder';
