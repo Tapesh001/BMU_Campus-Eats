@@ -1,22 +1,22 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student profile · BMU Campus Eats</title><link rel="stylesheet" href="/designs/css/site.css"><link rel="stylesheet" href="/designs/css/profile.css"><script defer src="/designs/scripts/account.js"></script><link rel="stylesheet" href="/designs/css/extras.css"><script defer src="/designs/scripts/extras.js"></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student profile · BMU Campus Eats</title><link rel="stylesheet" href="../css/site.css"><link rel="stylesheet" href="../css/profile.css"><link rel="stylesheet" href="../css/extras.css"></head>
 <body>
-<header class="campus-bar"><a class="wordmark" href="index.html"><img src="assets/5733f.png" width="42" height="42" alt=""> BMU Campus Eats <small>STUDENT</small></a>
+<header class="campus-bar"><a class="wordmark" href="index.html"><img src="../assets/5733f.png" width="42" height="42" alt=""> BMU Campus Eats <small>STUDENT</small></a>
 <nav aria-label="Main navigation"><a href="index.html">Home</a><a href="shops.html">Shops</a><a href="cart.html">Cart</a><a href="orders.html">Orders</a><a href="profile.html" aria-current="page">Profile</a></nav></header>
 <main class="profile-page">
 <p class="kicker">CAMPUS EATS / ACCOUNT</p><h1>Student profile</h1>
 <div class="profile-grid">
-<aside class="campus-pass"><small>CAMPUS PASS</small><div id="initials" aria-hidden="true">BMU</div><h2 id="pass-name">Guest</h2><p id="membership">Student membership</p><div class="pass-id"><small>STUDENT ID</small><strong id="pass-number">—</strong></div></aside>
-<section class="details"><header><h2>Account details</h2><button type="button" id="edit" hidden>Edit profile</button></header>
-<dl id="summary"></dl><form id="profile" hidden><label>Full name<input name="name" autocomplete="name" maxlength="80" required></label>
+<aside class="campus-pass"><small>CAMPUS PASS</small><div id="initials" aria-hidden="true">BMU</div><h2 id="pass-name">Student name</h2><p id="membership">Student membership</p><div class="pass-id"><small>STUDENT ID</small><strong id="pass-number">—</strong></div></aside>
+<section class="details"><header><h2>Account details</h2><button id="edit" type="button">Edit profile</button></header>
+<dl id="summary"><div><dt>Full name</dt><dd>Student name</dd></div><div><dt>BMU email</dt><dd>student@bmu.edu.in</dd></div><div><dt>Student ID</dt><dd>Your student ID</dd></div><div><dt>Hostel / residence</dt><dd>Your hostel</dd></div><div><dt>Pickup preference</dt><dd>Shop counter</dd></div></dl><form inert id="profile" hidden><label>Full name<input name="name" autocomplete="name" maxlength="80" required></label>
 <label>BMU email<input name="email" type="email" autocomplete="email" placeholder="student@bmu.edu.in" maxlength="160" pattern="[^@ ]+@[bB][mM][uU]\.[eE][dD][uU]\.[iI][nN]" title="Use your @bmu.edu.in email address" required></label>
 <label>Student ID<input name="studentId" pattern="[A-Za-z0-9_\-]{2,40}" maxlength="40" title="2–40 letters, numbers, underscores or hyphens" required></label>
 <label>Hostel / residence<input name="hostel" placeholder="Hostel name or day scholar" maxlength="80" required></label>
-<label>Pickup preference<select name="pickup"><option>Hostel gate</option><option>Shop counter</option></select></label><div class="edit-actions"><button type="submit">Save changes</button><button type="button" id="cancel">Cancel</button></div></form>
-<p role="status" aria-live="polite">Loading profile…</p>
+<label>Pickup preference<select name="pickup"><option>Hostel gate</option><option>Shop counter</option></select></label><div class="edit-actions"><button type="button">Save changes</button><button id="cancel" type="button">Cancel</button></div></form>
+<p role="status" aria-live="polite">Static profile design · placeholder details</p>
 <div id="guest-links" hidden><a class="primary" href="login.html">Log in</a> <a href="register.html">Create account</a></div>
 </section>
 </div>
-<div id="member-links" hidden><a class="history" href="orders.html"><span><small>YOUR ACTIVITY</small><strong>Order history</strong></span><span aria-hidden="true">→</span></a><button id="logout" type="button">Sign out</button></div>
+<div id="member-links"><a class="history" href="orders.html"><span><small>YOUR ACTIVITY</small><strong>Order history</strong></span><span aria-hidden="true">→</span></a><button id="logout" type="button">Sign out</button></div>
 </main></body></html>

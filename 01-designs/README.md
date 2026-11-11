@@ -1,6 +1,6 @@
 # 01 · Designs
 
-This folder contains the **actual website design code for all 14 pages**, with HTML and CSS separated. It includes the existing browser scripts and assets required to render dynamic screens. These files are exported from `02-frontend`; they are not mockups or screenshots.
+This folder contains the **actual website design code for all 14 pages**, with HTML and CSS separated. There is no JavaScript in this folder or in the exported HTML. Relative CSS/image paths let these designs open directly in a browser or VS Code Live Server without Node or a backend. The layouts and styles come from `02-frontend`; API-driven sections use static display states.
 
 The original visual reference lives in [Figma](https://www.figma.com/design/pOPskhvCKVF6aPYKMedHs5/BMU-CAMPUS-EATS?node-id=3-1141). Access depends on its sharing settings; the editable Figma document is not included here.
 
@@ -10,7 +10,6 @@ The original visual reference lives in [Figma](https://www.figma.com/design/pOPs
 01-designs/
 ├── html/                 # All 14 page layouts
 ├── css/                  # Page styles plus shared styles
-├── scripts/              # Rendering, interaction and animation code
 ├── assets/               # Images and SVG assets used by the pages
 ├── readme-banner.svg
 └── README.md
@@ -39,9 +38,13 @@ Each HTML file links its required styles in the correct order. Page CSS must be 
 
 ## Preview the design code
 
-Run `npm ci` once, then `npm start` from the repository root. Open **[the design preview](http://localhost:8765/designs/)**. Individual pages use URLs such as `/designs/login.html`, `/designs/profile.html` and `/designs/menu.html?shop=Greenox`.
+**No installation or server is required.** Open [html/index.html](html/index.html) directly in Chrome, Edge or another browser. In VS Code, right-click that file and choose **Open with Live Server** if that extension is installed. Open any of the 14 HTML files independently to inspect its design.
 
-The preview uses the copied HTML, CSS, scripts and assets in this folder. It connects to the same backend and saved data as the main website, so form submissions and orders are real project-demo actions. Account screens require login, tracking needs an order ID, and administration requires the configured admin password. Opening the HTML directly as a local file cannot supply these API-driven screens.
+CSS and image references are relative. Keep `html`, `css` and `assets` together when copying or sharing this folder. Google Fonts requires internet access; local fallback fonts still render when offline.
+
+These are visual previews only: forms are inert, buttons do not submit, and there are no scripts, API calls, login requirements or saved-data changes. Normal links can navigate between static pages. The menu shows the first populated shop from the supplied catalog; profile and tracking show labelled placeholder states. Search, cart updates and water animation belong to the working website and do not run here.
+
+If the project server is already running, the same static designs are also available at [the design preview](http://localhost:8765/designs/html/index.html).
 
 ## Keep the copies correct
 
@@ -51,7 +54,7 @@ Edit the working website in `02-frontend`, then run:
 npm run sync:designs
 ```
 
-`npm start` also synchronizes these copies automatically. CSS, JavaScript and assets are copied unchanged; HTML changes only the stylesheet and script URL prefixes to load the exported files. Do not edit these generated copies separately: the next sync overwrites them. If a source file is deleted or renamed, remove its obsolete export too.
+`npm start` also synchronizes these copies automatically. CSS and assets are copied unchanged. The export removes scripts, makes asset paths relative, prevents form submission and fills API-dependent sections with static display states. The export generator stays in `05-documentation`, outside this design folder. Do not edit these generated copies separately: the next sync overwrites them. If a source file is deleted or renamed, remove its obsolete export too.
 
 ## Visual direction
 
@@ -67,7 +70,7 @@ Warm cream surfaces pair with espresso text and terracotta accents. Headings use
 | Beige | `#E9CBAA` | Secondary details |
 | Muted grey | `#70645D` | Supporting text |
 
-The exported shared styling lives in [site.css](css/site.css), with base layout in [design.css](css/design.css). The home interaction lives in [water-surface.js](scripts/water-surface.js).
+The exported shared styling lives in [site.css](css/site.css), with base layout in [design.css](css/design.css). The JavaScript water interaction is intentionally excluded from this static export.
 
 ## Contents
 
