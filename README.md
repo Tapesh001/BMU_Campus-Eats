@@ -79,8 +79,8 @@ Public URLs stay the same: `/`, `/shops.html`, `/menu.html`, `/cart.html`, and s
 Install **Node.js 22 or newer** with npm, then run:
 
 ```bash
-git clone https://github.com/Tapesh001/bububu.git
-cd bububu
+git clone https://github.com/Tapesh001/BMU_Campus-Eats.git
+cd BMU_Campus-Eats
 npm ci
 npm start
 ```
@@ -160,6 +160,6 @@ Online payment, verified restaurant fulfilment and permanent public hosting are 
 
 **Built around campus life. Designed around food.**
 
-[Design reference](https://www.figma.com/design/pOPskhvCKVF6aPYKMedHs5/BMU-CAMPUS-EATS?node-id=3-1141) · [Source code](https://github.com/Tapesh001/bububu) · [Team guide](05-documentation/team-roles.md)
+[Design reference](https://www.figma.com/design/pOPskhvCKVF6aPYKMedHs5/BMU-CAMPUS-EATS?node-id=3-1141) · [Source code](https://github.com/Tapesh001/BMU_Campus-Eats) · [Team guide](05-documentation/team-roles.md)
 
 </div>
