@@ -60,7 +60,8 @@ bmu-campus-eats/
 │   └── menu-data.json       # Starting menu catalog
 ├── 05-documentation/
 │   ├── team-roles.md        # Ownership and contribution workflow
-│   └── architecture.md      # Request flow, API map and storage
+│   ├── architecture.md      # Request flow, API map and storage
+│   └── sync-designs.js      # Node-only static design exporter
 ├── .gitignore
 ├── package.json
 ├── package-lock.json
