@@ -80,6 +80,12 @@ app.put("/api/profile",(req,res)=>{
   persist(students.map(s=>s.id===updated.id ? updated : s)); res.json(publicProfile(updated));
 });
 const commerce = require('./commerce')(app, directory, students);
+// Preview the exported design code with the same APIs as the main website.
+const designsDirectory = path.join(projectRoot, '01-designs');
+for (const folder of ['css', 'scripts', 'assets']) {
+  app.use('/designs/' + folder, express.static(path.join(designsDirectory, folder)));
+}
+app.use('/designs', express.static(path.join(designsDirectory, 'html')));
 // Publish only browser assets; backend, configuration and data remain private.
 for (const folder of ['assets', 'styles', 'scripts']) {
   app.use('/' + folder, express.static(path.join(frontendDirectory, folder)));

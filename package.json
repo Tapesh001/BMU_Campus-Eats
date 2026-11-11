@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "sync:designs": "node 05-documentation/sync-designs.js",
+    "prestart": "npm run sync:designs",
     "start": "node 03-backend/server.js"
   },
   "dependencies": {

@@ -1,0 +1,5 @@
+.shops-content[data-name] { padding-top:18px; gap:14px }
+.shops-content .status-legend { padding:10px 16px }
+[data-name="Detailed shop grid"] { column-gap:min(22px,1.5vw) }
+[data-name="Detailed shop card"] { max-width:32.1% }
+[data-name="Detailed shop card"]:first-child { max-width:29% }

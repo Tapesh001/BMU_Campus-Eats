@@ -1,0 +1,3 @@
+.hero-copy { width:min(760px,62%) }
+.hero-illustration { width:min(360px,32%) }
+[data-name="Steps row"],[data-name^="Benefits row"] { overflow:visible }

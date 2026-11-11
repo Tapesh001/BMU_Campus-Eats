@@ -44,7 +44,11 @@ Browse in order: **design → frontend → backend → data → documentation**.
 
 ```text
 bmu-campus-eats/
-├── 01-designs/              # Figma reference, palette and README artwork
+├── 01-designs/              # Complete design-code export and Figma reference
+│   ├── html/                # All page layouts, separated from CSS
+│   ├── css/                 # Page-specific and shared design styles
+│   ├── scripts/             # Scripts needed to render the designs
+│   └── assets/              # Design images and SVGs
 ├── 02-frontend/
 │   ├── pages/               # Separate HTML files for each screen
 │   ├── styles/              # Page-specific and shared CSS
@@ -66,13 +70,15 @@ bmu-campus-eats/
 
 | Start here | Purpose |
 | :--- | :--- |
-| [01 · Designs](01-designs/README.md) | Figma reference, colour palette and typography. |
+| [01 · Designs](01-designs/README.md) | All 14 pages' HTML and CSS, scripts, assets, preview instructions and Figma reference. |
 | [02 · Frontend](02-frontend) | Page markup, styles, scripts and visual assets. |
 | [03 · Backend](03-backend) | Express application and business rules. |
 | [04 · Data](04-data/README.md) | Menu seed and runtime storage explanation. |
 | [05 · Documentation](05-documentation) | Team responsibilities and technical walkthrough. |
 
 Public URLs stay the same: `/`, `/shops.html`, `/menu.html`, `/cart.html`, and so on.
+
+The exported design code can be previewed at `/designs/` while the server is running. `npm run sync:designs` refreshes it from the working frontend; `npm start` runs this sync automatically. See the [page-by-page HTML and CSS index](01-designs/README.md#page-by-page-design-code).
 
 ## Run locally
 

@@ -1,0 +1,10 @@
+.cart-announcement { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:100; max-width:90vw; border-radius:12px; background:var(--espresso); color:white; box-shadow:0 8px 24px #321c1820; padding:12px 20px; pointer-events:none; }
+.cart-announcement:empty { display:none; }
+.cart-count { display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; margin-left:6px; padding:2px 5px; border-radius:50%; background:var(--tomato); color:white; font-size:12px; }
+.food-flight { position:fixed; width:88px; height:88px; z-index:99; pointer-events:none; }
+.food-flight svg { width:100%; height:100%; filter:drop-shadow(0 4px 5px #321c1820); }
+.wrap-left { transform-origin:50% 80%; animation:unwrap-left 460ms ease-in-out; }
+.wrap-right { transform-origin:50% 80%; animation:unwrap-right 460ms ease-in-out; }
+@keyframes unwrap-left { 50% { transform:rotate(-24deg) translateX(-5px); } }
+@keyframes unwrap-right { 50% { transform:rotate(24deg) translateX(5px); } }
+@media (prefers-reduced-motion:reduce) { .food-flight { display:none; } }
