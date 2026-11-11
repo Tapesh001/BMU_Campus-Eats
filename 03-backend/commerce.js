@@ -9,7 +9,7 @@ module.exports = function installCommerce(app, directory, students) {
     : { orders: [], favourites: {}, addresses: {} };
   data.offers ||= [];
   const catalogFile = path.join(directory, 'catalog.json');
-  const catalog = () => JSON.parse(fs.readFileSync(fs.existsSync(catalogFile) ? catalogFile : path.join(__dirname, 'menu-data.json'), 'utf8'));
+  const catalog = () => JSON.parse(fs.readFileSync(fs.existsSync(catalogFile) ? catalogFile : path.join(__dirname, '..', '04-data', 'menu-data.json'), 'utf8'));
   function saveCatalog(next) {
     fs.writeFileSync(catalogFile + '.tmp', JSON.stringify(next, null, 2), { mode: 0o600 });
     fs.renameSync(catalogFile + '.tmp', catalogFile);

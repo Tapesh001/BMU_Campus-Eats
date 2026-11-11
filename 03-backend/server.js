@@ -4,7 +4,9 @@ const path = require("node:path");
 const os = require("node:os");
 const crypto = require("node:crypto");
 const scrypt = require("node:util").promisify(crypto.scrypt);
-if (fs.existsSync(path.join(__dirname, '.env'))) process.loadEnvFile(path.join(__dirname, '.env'));
+const projectRoot = path.resolve(__dirname, '..');
+const frontendDirectory = path.join(projectRoot, '02-frontend');
+if (fs.existsSync(path.join(projectRoot, '.env'))) process.loadEnvFile(path.join(projectRoot, '.env'));
 
 const app = express();
 const directory = process.env.BMU_DATA_DIR || path.join(os.homedir(), ".bmu-campus-eats");
@@ -78,11 +80,16 @@ app.put("/api/profile",(req,res)=>{
   persist(students.map(s=>s.id===updated.id ? updated : s)); res.json(publicProfile(updated));
 });
 const commerce = require('./commerce')(app, directory, students);
-app.use("/assets",express.static(path.join(__dirname,"assets")));
+// Publish only browser assets; backend, configuration and data remain private.
+for (const folder of ['assets', 'styles', 'scripts']) {
+  app.use('/' + folder, express.static(path.join(frontendDirectory, folder)));
+}
 app.get(/^\/(?:[a-z][a-z-]*\.(?:html|css|js))?$/,(req,res)=>{
   const name=req.path.slice(1) || "index.html";
   if(["server.js", "commerce.js"].includes(name)) return res.sendStatus(404);
-  res.sendFile(path.join(__dirname,name));
+  // Root page URLs and old asset URLs stay compatible with existing links.
+  const folder = { '.html': 'pages', '.css': 'styles', '.js': 'scripts' }[path.extname(name)];
+  res.sendFile(path.join(frontendDirectory, folder, name));
 });
 app.use((err,req,res,next)=>res.status(err.status || 500).json({error:err.status===400?err.message:"Request could not be completed."}));
 app.listen(Number(process.env.PORT || 8765),process.env.HOST || "0.0.0.0",error=>{

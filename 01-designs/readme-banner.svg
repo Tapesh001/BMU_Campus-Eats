@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-labelledby="title desc">
+  <title id="title">BMU Campus Eats</title>
+  <desc id="desc">A cream and terracotta food-inspired banner with a stylized plate. Your campus. Your cravings. One place.</desc>
+  <defs><pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.2" fill="#321C18" opacity=".09"/></pattern></defs>
+  <rect width="1280" height="420" rx="28" fill="#F8EFE3"/>
+  <rect x="745" width="535" height="420" rx="28" fill="#E9CBAA"/>
+  <rect x="745" width="535" height="420" rx="28" fill="url(#dots)"/>
+  <path d="M745 0C855 98 654 255 794 420H745Z" fill="#F8EFE3"/>
+  <rect x="58" y="48" width="218" height="31" rx="15.5" fill="#321C18"/>
+  <text x="167" y="69" fill="#F8EFE3" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2">THE CAMPUS FOOD EDIT</text>
+  <text x="56" y="156" fill="#321C18" font-family="Georgia,serif" font-size="67" font-weight="700">BMU Campus</text>
+  <text x="56" y="234" fill="#B94B32" font-family="Georgia,serif" font-size="76" font-weight="700">Eats.</text>
+  <text x="60" y="281" fill="#70645D" font-family="Arial,sans-serif" font-size="23">Your campus. Your cravings. One place.</text>
+  <path d="M60 313H640" stroke="#E9CBAA" stroke-width="2"/>
+  <text x="60" y="352" fill="#321C18" font-family="Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="2">DISCOVER</text>
+  <circle cx="175" cy="347" r="3" fill="#B94B32"/>
+  <text x="196" y="352" fill="#321C18" font-family="Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="2">ORDER</text>
+  <circle cx="282" cy="347" r="3" fill="#B94B32"/>
+  <text x="303" y="352" fill="#321C18" font-family="Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="2">PICK UP</text>
+  <circle cx="1002" cy="207" r="159" fill="#B94B32"/>
+  <circle cx="1002" cy="207" r="135" fill="#FFFDF8"/>
+  <circle cx="1002" cy="207" r="112" fill="none" stroke="#E9CBAA" stroke-width="2"/>
+  <g transform="rotate(-18 1002 207)">
+    <path d="M932 161Q1002 96 1072 161L1002 284Z" fill="#E9CBAA" stroke="#321C18" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M942 165Q1002 120 1062 165L1002 269Z" fill="#E5AB54"/>
+    <path d="M932 161Q1002 96 1072 161" fill="none" stroke="#B94B32" stroke-width="15" stroke-linecap="round"/>
+    <circle cx="978" cy="176" r="12" fill="#B94B32"/><circle cx="1025" cy="174" r="12" fill="#B94B32"/><circle cx="1002" cy="222" r="11" fill="#B94B32"/>
+    <path d="M998 153q17 1 8 17q-15-2-8-17M977 205q-15 3-9 16q15-3 9-16M1026 203q16 3 7 17q-14-4-7-17" fill="#52774B"/>
+  </g>
+  <rect x="873" y="350" width="260" height="35" rx="17.5" fill="#321C18"/>
+  <text x="1003" y="373" text-anchor="middle" fill="#F8EFE3" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="1.5">MADE FOR CAMPUS CRAVINGS</text>
+</svg>
