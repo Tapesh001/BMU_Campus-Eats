@@ -38,7 +38,7 @@ async function refreshOrder() {
       const confirmation = document.createElement('p');
       confirmation.id = 'order-confirmation';
       confirmation.setAttribute('role', 'status');
-      confirmation.textContent = '✓ Demo order saved. Pay when you collect at the shop.';
+      confirmation.textContent = '✓ Order placed. Await acceptance before collecting. Payment is due at pickup.';
       document.querySelector('#order-detail').prepend(confirmation);
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
         confirmation.animate([{ opacity: 0, transform: 'translateY(5px)' }, { opacity: 1, transform: 'none' }], { duration: 450 });
