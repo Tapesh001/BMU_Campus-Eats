@@ -79,6 +79,7 @@ app.put("/api/profile",(req,res)=>{
   const updated={...req.student,...p};
   persist(students.map(s=>s.id===updated.id ? updated : s)); res.json(publicProfile(updated));
 });
+require('./password-reset')(app, { students, persist, sessions });
 const commerce = require('./commerce')(app, directory, students);
 // Optional static design preview; these pages contain no browser JavaScript.
 const designsDirectory = path.join(projectRoot, '01-designs');

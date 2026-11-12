@@ -19,3 +19,7 @@
 .menu-item button:disabled { background:var(--disabled); color:var(--muted); cursor:default }
 .menu-item select,.menu-tools select { max-width:100%; margin:4px 0; padding:8px; border:1px solid var(--field-line); border-radius:6px; background:var(--surface) }
 .menu-item select { display:block; width:100% }
+
+.menu-cart-link { display:inline-flex; justify-content:center; align-items:center; min-height:56px; padding:16px 28px; background:var(--paprika); color:var(--on-dark); border-radius:12px; font-size:20px; font-weight:700; box-shadow:0 5px 16px #321c1824; text-decoration:none }
+.menu-cart-link:hover { background:var(--espresso); text-decoration:none }
+@media(max-width:600px) { .menu-cart-link { display:flex; width:100% } }

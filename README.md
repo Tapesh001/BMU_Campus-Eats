@@ -70,7 +70,7 @@ bmu-campus-eats/
 
 | Start here | Purpose |
 | :--- | :--- |
-| [01 · Designs](01-designs/README.md) | All 14 pages' static HTML and CSS, image assets, preview instructions and Figma reference. |
+| [01 · Designs](01-designs/README.md) | All 15 pages' static HTML and CSS, image assets, preview instructions and Figma reference. |
 | [02 · Frontend](02-frontend) | Page markup, styles, scripts and visual assets. |
 | [03 · Backend](03-backend) | Express application and business rules. |
 | [04 · Data](04-data/README.md) | Menu seed and runtime storage explanation. |

@@ -1,6 +1,6 @@
 # 01 · Designs
 
-This folder contains the **actual website design code for all 14 pages**, with HTML and CSS separated. There is no JavaScript in this folder or in the exported HTML. Relative CSS/image paths let these designs open directly in a browser or VS Code Live Server without Node or a backend. The layouts and styles come from `02-frontend`; API-driven sections use static display states.
+This folder contains the **actual website design code for all 15 pages**, with HTML and CSS separated. There is no JavaScript in this folder or in the exported HTML. Relative CSS/image paths let these designs open directly in a browser or VS Code Live Server without Node or a backend. The layouts and styles come from `02-frontend`; API-driven sections use static display states.
 
 The original visual reference lives in [Figma](https://www.figma.com/design/pOPskhvCKVF6aPYKMedHs5/BMU-CAMPUS-EATS?node-id=3-1141). Access depends on its sharing settings; the editable Figma document is not included here.
 
@@ -8,7 +8,7 @@ The original visual reference lives in [Figma](https://www.figma.com/design/pOPs
 
 ```text
 01-designs/
-├── html/                 # All 14 page layouts
+├── html/                 # All 15 page layouts
 ├── css/                  # Page styles plus shared styles
 ├── assets/               # Images and SVG assets used by the pages
 ├── readme-banner.svg
@@ -22,6 +22,7 @@ The original visual reference lives in [Figma](https://www.figma.com/design/pOPs
 | Home | [index.html](html/index.html) | [home.css](css/home.css) |
 | Shops | [shops.html](html/shops.html) | [shops.css](css/shops.css) |
 | Shop menu | [menu.html](html/menu.html) | [menu.css](css/menu.css) |
+| Password reset | [forgot-password.html](html/forgot-password.html) | [forgot-password.css](css/forgot-password.css) |
 | Login | [login.html](html/login.html) | [login.css](css/login.css) |
 | Sign up | [register.html](html/register.html) | [register.css](css/register.css) |
 | Student profile | [profile.html](html/profile.html) | [profile.css](css/profile.css) |
@@ -38,7 +39,7 @@ Each HTML file links its required styles in the correct order. Page CSS must be 
 
 ## Preview the design code
 
-**No installation or server is required.** Open [html/index.html](html/index.html) directly in Chrome, Edge or another browser. In VS Code, right-click that file and choose **Open with Live Server** if that extension is installed. Open any of the 14 HTML files independently to inspect its design.
+**No installation or server is required.** Open [html/index.html](html/index.html) directly in Chrome, Edge or another browser. In VS Code, right-click that file and choose **Open with Live Server** if that extension is installed. Open any of the 15 HTML files independently to inspect its design.
 
 CSS and image references are relative. Keep `html`, `css` and `assets` together when copying or sharing this folder. Google Fonts requires internet access; local fallback fonts still render when offline.
 
