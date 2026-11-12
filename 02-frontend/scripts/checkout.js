@@ -29,6 +29,7 @@ async function startCheckout() {
     const student = await request('profile');
     document.querySelector('#student-details').textContent = student.name + ' · ' + student.email;
     form.elements.hostel.value = student.hostel;
+    form.elements.fulfilment.value = student.pickup === 'Hostel gate' ? 'hostel-gate' : 'pickup';
     const cartKey = 'bmu.' + student.id + '.cart';
     const items = JSON.parse(localStorage.getItem(cartKey) || '[]');
     let quote = await request('checkout/quote', { items });
@@ -79,7 +80,7 @@ async function startCheckout() {
       if (button.disabled) return;
       button.disabled = true;
       document.querySelector('#apply-coupon').disabled = true;
-      button.textContent = 'Placing order�';
+      button.textContent = 'Placing order...';
       status.textContent = 'Saving your order…';
       try {
         const fields = Object.fromEntries(new FormData(form));

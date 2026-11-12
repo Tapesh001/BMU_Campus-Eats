@@ -74,12 +74,12 @@ module.exports = function installCommerce(app, directory, students) {
     for (const field of ['block', 'room', 'instructions']) {
       if (typeof address[field] !== 'string' || address[field].length > 300) fail('Enter valid address details.');
     }
-    if (req.body.fulfilment !== 'pickup') fail('Only shop pickup is currently supported.');
+    if (!['pickup', 'hostel-gate'].includes(req.body.fulfilment)) fail('Choose shop counter or hostel gate collection.');
     if (req.body.payment !== 'pickup') fail('Select pay at pickup.');
     const summary = quote(req.body.items, req.body.coupon);
     const order = { ...summary, id: 'BMU-' + crypto.randomUUID().slice(0, 8).toUpperCase(),
       studentId: req.student.id, requestId: key, created: new Date().toISOString(), status: 'Order Placed',
-      address, fulfilment: 'pickup', payment: 'Unpaid · Pay at pickup', demo: true };
+      address: { ...address, hostel: address.hostel.trim() }, fulfilment: req.body.fulfilment, payment: 'Unpaid · Pay at pickup', demo: true };
     save({ ...data, orders: [order, ...data.orders] });
     res.status(201).json(order);
   });

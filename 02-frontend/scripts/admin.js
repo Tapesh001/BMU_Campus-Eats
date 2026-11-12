@@ -37,7 +37,7 @@ async function loadDashboard() {
     for (const status of ['Order Placed', 'Accepted by Restaurant', 'Preparing Your Food', 'Ready for Pickup', 'Delivered']) select.add(new Option(status));
     select.value = order.status;
     const button = make('button', 'Update'); button.onclick = () => change('orders/' + order.id, 'PATCH', { status: select.value });
-    row.append(make('p', order.id + ' · ₹' + order.total / 100), select, button); orders.append(row);
+    row.append(make('p', (order.fulfilment === 'hostel-gate' ? 'Hostel gate: ' + order.address.hostel : 'Shop counter') + (order.address.block ? ' - Block ' + order.address.block : '') + (order.address.room ? ' - Room ' + order.address.room : '')), make('p', order.address.instructions || ''), make('p', order.id + ' · ₹' + order.total / 100), select, button); orders.append(row);
   }
   const shops = document.querySelector('#restaurant-management'); shops.replaceChildren();
   for (const shop of data.restaurants) {

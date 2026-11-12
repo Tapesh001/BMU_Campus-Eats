@@ -34,6 +34,10 @@ async function refreshOrder() {
     }
     document.querySelector('#order-total').textContent = 'Total ₹' + (order.total / 100).toLocaleString('en-IN');
     document.querySelector('#payment-status').textContent = order.payment;
+    const destination = order.fulfilment === 'hostel-gate'
+      ? 'Hostel gate: ' + order.address.hostel + (order.address.block ? ' - Block ' + order.address.block : '')
+      : 'Shop counter';
+    document.querySelector('#collection-location').textContent = 'Collection location: ' + destination;
     if (new URLSearchParams(location.search).has('confirmed') && !document.querySelector('#order-confirmation')) {
       const confirmation = document.createElement('p');
       confirmation.id = 'order-confirmation';

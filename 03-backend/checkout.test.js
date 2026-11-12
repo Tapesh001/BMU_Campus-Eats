@@ -4,10 +4,10 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const source = fs.readFileSync(require('node:path').join(__dirname, '../02-frontend/scripts/checkout.js'), 'utf8');
-async function setup({ failFirst = false, noProfile = false, corruptPending = false } = {}) {
+async function setup({ failFirst = false, noProfile = false, corruptPending = false, hostelGate = false } = {}) {
   const node = () => ({disabled:true, value:'', textContent:'', append(){}, replaceChildren(){}});
   const nodes = Object.fromEntries(['checkout-form','checkout-status','place-order','student-details','checkout-items','totals','apply-coupon','coupon-code','coupon-status'].map(id=>['#'+id,node()]));
-  nodes['#checkout-form'].elements = {hostel:{value:''}};
+  nodes['#checkout-form'].elements = {hostel:{value:''},fulfilment:{value:'pickup'}};
   const cart = new Map([['bmu.student.cart', '[{"dish":"Test","qty":1}]']]);
   const pending = new Map();
   if (corruptPending) pending.set('bmu.student.checkout-request','broken-json');
@@ -16,9 +16,9 @@ async function setup({ failFirst = false, noProfile = false, corruptPending = fa
   const context = { document:{querySelector:s=>nodes[s],createElement:node},
     crypto:{getRandomValues:bytes=>crypto.randomFillSync(bytes)}, Uint8Array, AbortController, setTimeout,clearTimeout,
     localStorage:storage(cart),sessionStorage:storage(pending),location:{assign:url=>destination=url},
-    FormData:class { *[Symbol.iterator](){yield* Object.entries({hostel:'BSH',block:'B',room:'418',instructions:'',fulfilment:'pickup',payment:'pickup'});} },
+    FormData:class { *[Symbol.iterator](){yield* Object.entries({hostel:'BSH',block:'B',room:'418',instructions:'',fulfilment:nodes['#checkout-form'].elements.fulfilment.value,payment:'pickup'});} },
     fetch:async (url,opts)=>{
-      if (url==='/api/profile') return {ok:!noProfile,json:async()=>noProfile?{error:'Sign in to continue.'}:{id:'student',name:'Test',email:'test@bmu.edu.in',hostel:'BSH'}};
+      if (url==='/api/profile') return {ok:!noProfile,json:async()=>noProfile?{error:'Sign in to continue.'}:{id:'student',name:'Test',email:'test@bmu.edu.in',hostel:'BSH',pickup:hostelGate?'Hostel gate':'Shop counter'}};
       if(url==='/api/checkout/quote') return {ok:true,json:async()=>({items:[],subtotal:100,tax:0,discount:0,total:100})};
       requests.push(JSON.parse(opts.body));
       if(failFirst && requests.length===1) throw Object.assign(new Error('aborted'),{name:'AbortError'});
@@ -45,4 +45,8 @@ test('initialization failure prevents submission and leaves button disabled',asy
 });
 test('malformed saved checkout request recovers',async()=>{
   const s=await setup({corruptPending:true});await s.submit();assert.ok(s.destination);
+});
+test('hostel-gate profile preference is submitted to the order API',async()=>{
+  const s=await setup({hostelGate:true});await s.submit();
+  assert.equal(s.requests[0].fulfilment,'hostel-gate');assert.equal(s.requests[0].address.hostel,'BSH');
 });
