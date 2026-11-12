@@ -101,5 +101,20 @@ app.get(/^\/(?:[a-z][a-z-]*\.(?:html|css|js))?$/,(req,res)=>{
 app.use((err,req,res,next)=>res.status(err.status || 500).json({error:err.status===400?err.message:"Request could not be completed."}));
 app.listen(Number(process.env.PORT || 8765),process.env.HOST || "0.0.0.0",error=>{
   if (error) throw error;
-  console.log("Campus Eats ready on port",process.env.PORT || 8765);
+  const port = Number(process.env.PORT || 8765);
+  const host = process.env.HOST || "0.0.0.0";
+  if (["0.0.0.0", "127.0.0.1", "localhost", "::"].includes(host)) {
+    console.log("This computer: http://localhost:" + port + "/");
+  }
+  if (host === "0.0.0.0" || host === "::") {
+    for (const addresses of Object.values(os.networkInterfaces())) {
+      for (const address of addresses || []) {
+        if (address.family === "IPv4" && !address.internal) {
+          console.log("Same-network address: http://" + address.address + ":" + port + "/");
+        }
+      }
+    }
+  } else if (!["127.0.0.1", "localhost"].includes(host)) {
+    console.log("Campus Eats listening on", host, "port", port);
+  }
 });
