@@ -8,16 +8,35 @@ const projectRoot = path.resolve(__dirname, '..');
 const frontendDirectory = path.join(projectRoot, '02-frontend');
 if (fs.existsSync(path.join(projectRoot, '.env'))) process.loadEnvFile(path.join(projectRoot, '.env'));
 
+async function start() {
+const store = await require('./cloud-store')();
 const app = express();
+// Serialize API handlers so asynchronous persistence cannot lose concurrent updates.
+let queue = Promise.resolve();
+app.use('/api', (req,res,next) => {
+  const previous = queue;
+  let release;
+  queue = new Promise(resolve => { release = resolve; });
+  previous.then(() => {
+    const json = res.json.bind(res);
+    res.json = body => { try { return json(body); } finally { release(); } };
+    res.once('finish', release);
+    next();
+  });
+});
 const directory = process.env.BMU_DATA_DIR || path.join(os.homedir(), ".bmu-campus-eats");
 const file = path.join(directory, "students.json");
 fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
-const students = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : [];
+const initialStudents = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : [];
+const students = store ? await store.load("students", initialStudents) : initialStudents;
 const sessions = new Map();
 const lifetime = 8 * 60 * 60 * 1000;
-function persist(next) {
+async function persist(next) {
+  if (store) await store.save("students", next);
+  else {
   fs.writeFileSync(file + ".tmp", JSON.stringify(next, null, 2), { mode: 0o600 });
   fs.renameSync(file + ".tmp", file);
+  }
   students.splice(0, students.length, ...next);
 }
 function publicProfile({ hash, salt, ...profile }) { return profile; }
@@ -58,7 +77,7 @@ app.post("/api/register",async(req,res)=>{
   const hash=(await scrypt(password,salt,64)).toString("hex");
   if (duplicate(p)) return res.status(409).json({error:"That email or student ID is already registered."});
   const student={...p,id:crypto.randomUUID(),joined:new Date().toISOString(),salt,hash};
-  persist([...students,student]); session(req,res,student.id);
+  await persist([...students,student]); session(req,res,student.id);
   res.status(201).json(publicProfile(student));
 });
 app.post("/api/login",async(req,res)=>{
@@ -72,15 +91,17 @@ app.post("/api/login",async(req,res)=>{
 app.post("/api/logout",(req,res)=>{sessions.delete(req.token);res.clearCookie("bmu_session",cookieOptions).json({ok:true});});
 app.use("/api/profile",(req,res,next)=>req.student ? next() : res.status(401).json({error:"Sign in to view your profile."}));
 app.get("/api/profile",(req,res)=>res.json(publicProfile(req.student)));
-app.put("/api/profile",(req,res)=>{
+app.put("/api/profile",async(req,res)=>{
   const p=clean(req.body), error=validate(p);
   if(error) return res.status(400).json({error});
   if(duplicate(p,req.student.id)) return res.status(409).json({error:"That email or student ID is already registered."});
   const updated={...req.student,...p};
-  persist(students.map(s=>s.id===updated.id ? updated : s)); res.json(publicProfile(updated));
+  await persist(students.map(s=>s.id===updated.id ? updated : s)); res.json(publicProfile(updated));
 });
 require('./password-reset')(app, { students, persist, sessions });
-const commerce = require('./commerce')(app, directory, students);
+const cloudCommerce = store ? await store.load('commerce', {orders:[],favourites:{},addresses:{},offers:[]}) : null;
+const cloudCatalog = store ? await store.load('catalog', JSON.parse(fs.readFileSync(path.join(projectRoot,'04-data/menu-data.json'),'utf8'))) : null;
+const commerce = require('./commerce')(app, directory, students, store && {store, data:cloudCommerce, catalog:cloudCatalog});
 // Optional static design preview; these pages contain no browser JavaScript.
 const designsDirectory = path.join(projectRoot, '01-designs');
 for (const folder of ['css', 'assets', 'html']) {
@@ -118,3 +139,6 @@ app.listen(Number(process.env.PORT || 8765),process.env.HOST || "0.0.0.0",error=
     console.log("Campus Eats listening on", host, "port", port);
   }
 });
+
+}
+start().catch(error => { console.error("Startup failed:", error.name); process.exitCode = 1; });

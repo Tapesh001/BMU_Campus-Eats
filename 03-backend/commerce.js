@@ -2,19 +2,22 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 
-module.exports = function installCommerce(app, directory, students) {
+module.exports = function installCommerce(app, directory, students, cloud = null) {
   const file = path.join(directory, 'commerce.json');
   let data = fs.existsSync(file)
     ? JSON.parse(fs.readFileSync(file, 'utf8'))
     : { orders: [], favourites: {}, addresses: {} };
+  if (cloud) data = cloud.data;
   data.offers ||= [];
   const catalogFile = path.join(directory, 'catalog.json');
-  const catalog = () => JSON.parse(fs.readFileSync(fs.existsSync(catalogFile) ? catalogFile : path.join(__dirname, '..', '04-data', 'menu-data.json'), 'utf8'));
-  function saveCatalog(next) {
+  const catalog = () => cloud ? structuredClone(cloud.catalog) : JSON.parse(fs.readFileSync(fs.existsSync(catalogFile) ? catalogFile : path.join(__dirname, '..', '04-data', 'menu-data.json'), 'utf8'));
+  async function saveCatalog(next) {
+    if (cloud) { await cloud.store.save('catalog',next); cloud.catalog = next; return; }
     fs.writeFileSync(catalogFile + '.tmp', JSON.stringify(next, null, 2), { mode: 0o600 });
     fs.renameSync(catalogFile + '.tmp', catalogFile);
   }
-  function save(next) {
+  async function save(next) {
+    if (cloud) { await cloud.store.save('commerce',next); data = next; return; }
     fs.writeFileSync(file + '.tmp', JSON.stringify(next, null, 2), { mode: 0o600 });
     fs.renameSync(file + '.tmp', file);
     data = next;
@@ -63,8 +66,8 @@ module.exports = function installCommerce(app, directory, students) {
     if (!req.student) return res.status(401).json({ error: 'Sign in to continue.' });
     next();
   });
-  app.post('/api/checkout/quote', (req, res) => res.json(quote(req.body.items, req.body.coupon)));
-  app.post('/api/orders', (req, res) => {
+  app.post('/api/checkout/quote', async (req, res) => res.json(quote(req.body.items, req.body.coupon)));
+  app.post('/api/orders', async (req, res) => {
     const key = req.body.requestId;
     if (typeof key !== 'string' || !/^[a-zA-Z0-9-]{16,80}$/.test(key)) fail('Missing checkout request identifier.');
     const existing = data.orders.find(order => order.studentId === req.student.id && order.requestId === key);
@@ -80,7 +83,7 @@ module.exports = function installCommerce(app, directory, students) {
     const order = { ...summary, id: 'BMU-' + crypto.randomUUID().slice(0, 8).toUpperCase(),
       studentId: req.student.id, requestId: key, created: new Date().toISOString(), status: 'Order Placed',
       address: { ...address, hostel: address.hostel.trim() }, fulfilment: req.body.fulfilment, payment: 'Unpaid · Pay at pickup', demo: true };
-    save({ ...data, orders: [order, ...data.orders] });
+    await save({ ...data, orders: [order, ...data.orders] });
     res.status(201).json(order);
   });
   app.get('/api/orders', (req, res) => res.json(data.orders.filter(order => order.studentId === req.student.id)));
@@ -90,24 +93,24 @@ module.exports = function installCommerce(app, directory, students) {
     res.json(order);
   });
   app.get('/api/favourites', (req, res) => res.json(data.favourites[req.student.id] || []));
-  app.put('/api/favourites', (req, res) => {
+  app.put('/api/favourites', async (req, res) => {
     const entries = req.body.items;
     if (!Array.isArray(entries) || entries.length > 200 || entries.some(item => typeof item !== 'string' || item.length > 250)) fail('Invalid favourites.');
     const favourites = { ...data.favourites, [req.student.id]: [...new Set(entries)] };
-    save({ ...data, favourites });
+    await save({ ...data, favourites });
     res.json(favourites[req.student.id]);
   });
   app.get('/api/addresses', (req, res) => res.json(data.addresses[req.student.id] || []));
-  app.put('/api/addresses', (req, res) => {
+  app.put('/api/addresses', async (req, res) => {
     const entries = req.body.items;
     if (!Array.isArray(entries) || entries.length > 5 || entries.some(item => typeof item !== 'string' || !item.trim() || item.length > 300)) fail('Save up to five addresses of 300 characters each.');
     const addresses = { ...data.addresses, [req.student.id]: entries };
-    save({ ...data, addresses });
+    await save({ ...data, addresses });
     res.json(addresses[req.student.id]);
   });
   app.get('/api/offers', (req, res) => res.json(data.offers));
   const adminSessions = new Map();
-  app.post('/api/admin/login', (req, res) => {
+  app.post('/api/admin/login', async (req, res) => {
     const password = process.env.BMU_ADMIN_PASSWORD;
     if (!password) return res.status(503).json({ error: 'Set BMU_ADMIN_PASSWORD on the server to enable administration.' });
     const supplied = typeof req.body.password === 'string' ? req.body.password : '';
@@ -128,25 +131,25 @@ module.exports = function installCommerce(app, directory, students) {
     demo: true, students: students.length, orders: data.orders,
     total: data.orders.reduce((sum, order) => sum + order.total, 0), restaurants: catalog(), offers: data.offers
   }));
-  app.patch('/api/admin/orders/:id', (req, res) => {
+  app.patch('/api/admin/orders/:id', async (req, res) => {
     const steps = ['Order Placed', 'Accepted by Restaurant', 'Preparing Your Food', 'Ready for Pickup', 'Delivered'];
     const order = data.orders.find(entry => entry.id === req.params.id);
     if (!order) return res.status(404).json({ error: 'Order not found.' });
     if (!steps.includes(req.body.status)) fail('Choose a valid order status.');
     const updated = { ...order, status: req.body.status };
-    save({ ...data, orders: data.orders.map(entry => entry.id === order.id ? updated : entry) });
+    await save({ ...data, orders: data.orders.map(entry => entry.id === order.id ? updated : entry) });
     res.json(updated);
   });
-  app.patch('/api/admin/restaurants/:shop', (req, res) => {
+  app.patch('/api/admin/restaurants/:shop', async (req, res) => {
     const menus = catalog();
     const menu = menus.find(entry => entry.shop === req.params.shop);
     if (!menu) return res.status(404).json({ error: 'Restaurant not found.' });
     if (typeof req.body.closed !== 'boolean') fail('Choose an availability status.');
     menu.closed = req.body.closed;
-    saveCatalog(menus);
+    await saveCatalog(menus);
     res.json(menu);
   });
-  app.post('/api/admin/menu', (req, res) => {
+  app.post('/api/admin/menu', async (req, res) => {
     const menus = catalog();
     const menu = menus.find(entry => entry.shop === req.body.shop);
     if (!menu) fail('Choose a restaurant.');
@@ -154,37 +157,37 @@ module.exports = function installCommerce(app, directory, students) {
     if (typeof dish !== 'string' || !dish.trim() || dish.length > 120 || typeof category !== 'string' || category.length > 80 || !Number.isFinite(price) || price < 0 || price > 10000) fail('Enter a name, category and valid price.');
     if (menu.items.some(item => item.dish === dish.trim())) fail('That item already exists.');
     menu.items.push({ dish: dish.trim(), category, price });
-    saveCatalog(menus);
+    await saveCatalog(menus);
     res.status(201).json(menu);
   });
-  app.patch('/api/admin/menu', (req, res) => {
+  app.patch('/api/admin/menu', async (req, res) => {
     const menus = catalog();
     const item = menus.find(entry => entry.shop === req.body.shop)?.items.find(entry => entry.dish === req.body.dish);
     if (!item) return res.status(404).json({ error: 'Item not found.' });
     if (!Number.isFinite(req.body.price) || req.body.price < 0 || req.body.price > 10000 || !Number.isInteger(req.body.stock) || req.body.stock < 0 || req.body.stock > 10000) fail('Enter a valid price and stock quantity.');
     item.price = req.body.price;
     item.stock = req.body.stock;
-    saveCatalog(menus);
+    await saveCatalog(menus);
     res.json(item);
   });
-  app.delete('/api/admin/menu', (req, res) => {
+  app.delete('/api/admin/menu', async (req, res) => {
     const menus = catalog();
     const menu = menus.find(entry => entry.shop === req.body.shop);
     if (!menu) return res.status(404).json({ error: 'Restaurant not found.' });
     menu.items = menu.items.filter(item => item.dish !== req.body.dish);
-    saveCatalog(menus);
+    await saveCatalog(menus);
     res.json({ ok: true });
   });
-  app.post('/api/admin/offers', (req, res) => {
+  app.post('/api/admin/offers', async (req, res) => {
     const { title, code, percent } = req.body;
     if (typeof title !== 'string' || !title.trim() || title.length > 120 || typeof code !== 'string' || !/^[A-Z0-9]{3,20}$/.test(code) || !Number.isFinite(percent) || percent <= 0 || percent > 100) fail('Enter a title, uppercase coupon code and discount from 1 to 100.');
     if (data.offers.some(offer => offer.code === code)) fail('Coupon code already exists.');
     const offer = { id: crypto.randomUUID(), title, code, percent, demo: true };
-    save({ ...data, offers: [...data.offers, offer] });
+    await save({ ...data, offers: [...data.offers, offer] });
     res.status(201).json(offer);
   });
-  app.delete('/api/admin/offers/:id', (req, res) => {
-    save({ ...data, offers: data.offers.filter(offer => offer.id !== req.params.id) });
+  app.delete('/api/admin/offers/:id', async (req, res) => {
+    await save({ ...data, offers: data.offers.filter(offer => offer.id !== req.params.id) });
     res.json({ ok: true });
   });
   return { catalog };

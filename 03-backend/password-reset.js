@@ -81,7 +81,7 @@ module.exports = function installPasswordReset(app, { students, persist, session
       const hash = (await scrypt(password, salt, 64)).toString('hex');
       const student = students.find(entry => entry.id === challenge.studentId && entry.email.toLowerCase() === email);
       if (challenges.get(email) !== challenge || challenge.until <= now() || !student || student.hash !== challenge.accountHash) return invalid();
-      persist(students.map(entry => entry.id === student.id ? { ...entry, salt, hash } : entry));
+      await persist(students.map(entry => entry.id === student.id ? { ...entry, salt, hash } : entry));
       challenges.delete(email);
       for (const [token, session] of sessions) if (session.id === student.id) sessions.delete(token);
       res.clearCookie('bmu_session', { path: '/', httpOnly: true, sameSite: 'strict' });
