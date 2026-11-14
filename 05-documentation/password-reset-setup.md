@@ -14,3 +14,10 @@ Reset codes expire after ten minutes, are single-use, and allow five incorrect a
 Verify the flow with `node --test 03-backend/password-reset.test.js`. These tests use a fake sender; an actual mailbox test is still required after configuration.
 
 Hosting must support Gmail SMTP and durable storage for the current JSON files. Render free services block SMTP; deploying there needs an HTTPS email provider and a durable database adapter. Do not deploy accounts or orders to an ephemeral filesystem.
+
+## Hosted HTTPS delivery
+
+On Render Free, configure BMU_BREVO_API_KEY and BMU_MAIL_USER in private environment settings. Complete Brevo sender verification and transactional activation first. The HTTPS sender takes precedence over local Gmail SMTP. Never commit API keys. A provider acceptance response does not guarantee inbox delivery; verify a real reset email before declaring setup complete.
+
+Configure BMU_ADMIN_PASSWORD privately to enable the admin login. Accounts and orders remain in MongoDB.
+

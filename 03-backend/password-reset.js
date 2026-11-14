@@ -20,7 +20,7 @@ function gmailSender(env = process.env) {
   };
 }
 
-module.exports = function installPasswordReset(app, { students, persist, sessions, sendCode = gmailSender(), now = Date.now }) {
+module.exports = function installPasswordReset(app, { students, persist, sessions, sendCode = require('./reset-email')() || gmailSender(), now = Date.now }) {
   const challenges = new Map(), limits = new Map();
   const secret = crypto.randomBytes(32);
   const lifetime = 10 * 60 * 1000;
