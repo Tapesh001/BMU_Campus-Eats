@@ -22,7 +22,7 @@ Each page owner also owns its same-named CSS file in `02-frontend/styles` (`inde
 - How passwords, sessions and BMU-domain validation work.
 - Why the server checks prices, options, stock and coupons again.
 - Where JSON submissions are saved and how admin edits reach menus and tracking.
-- How the five modules are integrated and tested; which requirements, including MongoDB, remain pending.
+- How the five modules are integrated and tested; which requirements, remain pending.
 
 Each member should demonstrate their screens, explain their JavaScript changes and show their own reviewed pull requests.
 

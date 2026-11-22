@@ -1,15 +1,19 @@
-# 04 · Data
+# Data storage
 
-[menu-data.json](menu-data.json) is the starting menu catalog, transcribed from the supplied shop menus. The server reads it when no administrator-edited private catalog exists.
+MongoDB stores application data in the `app_state` collection. The default database is `campus_eats`. The document layout is compatible with earlier Atlas deployments.
 
-## Runtime data
+| Document ID | Contents of the value field |
+| --- | --- |
+| students | Accounts, profile details, password salts and hashes |
+| commerce | Orders, favourites, addresses and offers |
+| catalog | Menus, stock and shop availability |
 
-Submissions are stored outside the repository, by default in `.bmu-campus-eats` in the operating-system user's home directory. Set `BMU_DATA_DIR` to change that location.
+An empty database starts with empty accounts and orders. The public menu in [menu-data.json](menu-data.json) supplies initial catalogue data. Administrator edits are saved to MongoDB. Each document carries a revision to prevent overwriting another writer's update.
 
-| Private file | Contents |
-| :--- | :--- |
-| `students.json` | Registration/profile submissions and salted password hashes |
-| `commerce.json` | Orders, favourites, addresses and offers |
-| `catalog.json` | Catalog overrides saved through administration |
+Earlier installations using local JSON may have records in the previous `BMU_DATA_DIR` or `~/.bmu-campus-eats`. Those records require a one-time migration if you want to carry them forward. Before first startup against a fresh database, back up the files and import their JSON values as the corresponding documents above, each shaped as `{ _id, revision: 0, value }`. Preserve student and order IDs, password salts and hashes. For a database already in use, reconcile the existing records before importing.
 
-Do not commit these runtime files. They are not served as public assets. An existing `catalog.json` takes precedence over seed changes; update it through administration, or deliberately back up and reset your own test catalog when testing a fresh seed.
+For an empty Atlas database, run the following once before starting the server. Set the target connection in the private environment first. The import uses a MongoDB transaction (Atlas or a replica set), refuses a populated target, and leaves the original files in place.
+
+```powershell
+node 03-backend/import-legacy.js "$env:USERPROFILE\.bmu-campus-eats"
+```

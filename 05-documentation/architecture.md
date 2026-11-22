@@ -1,6 +1,6 @@
 # Architecture & API guide
 
-The browser loads pages, styles and scripts from Express. Browser scripts call the same server's `/api` routes. The server validates input, checks sessions and saves data to local JSON files.
+The browser loads pages, styles and scripts from Express. Browser scripts call the same server's `/api` routes. The server validates input, checks sessions and saves data to MongoDB.
 
 ```text
 Browser: HTML + CSS + JavaScript
@@ -11,7 +11,7 @@ Express: server.js + commerce.js
                |
                | validation + session checks
                v
-Private runtime JSON storage
+MongoDB app_state collection
 ```
 
 ## Source locations and public routes
@@ -49,4 +49,4 @@ Send JSON bodies with `Content-Type: application/json`. Protected routes check a
 
 ## Persistence and limits
 
-See [data storage](../04-data/README.md) for the private runtime files. Sessions live in memory, so a restart signs users out. This is a single-process project demonstration using JSON, without a production database, online payment processing or restaurant fulfilment integration. MongoDB remains pending.
+See [data storage](../04-data/README.md) for the MongoDB document layout. The server loads data on startup and waits for MongoDB to acknowledge each write before reporting success. Run a single app instance with this snapshot storage model. Sessions live in memory and end when the server restarts.

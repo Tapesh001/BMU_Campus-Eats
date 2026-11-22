@@ -1,18 +1,16 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const express = require('express');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
 const install = require('./commerce');
 test('both collection options persist, retries reuse the order, invalid locations fail', async t => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bmu-order-test-'));
+  const records = new Map();
+  const store = {save: async (key, value) => records.set(key, structuredClone(value))};
   const app = express(); app.use(express.json());
   app.use((req,res,next)=>{req.student={id:'test-student'};next();});
-  const api = install(app,dir,[]);
+  const api = install(app, [], store, { orders: [], favourites: {}, addresses: {}, offers: [] }, require('../04-data/menu-data.json'));
   app.use((err,req,res,next)=>res.status(err.status||500).json({error:err.message}));
   const server = await new Promise(resolve=>{const s=app.listen(0,'127.0.0.1',()=>resolve(s));});
-  t.after(async()=>{await new Promise(resolve=>{server.close(resolve);server.closeAllConnections();});fs.rmSync(dir,{recursive:true,force:true});});
+  t.after(async()=>{await new Promise(resolve=>{server.close(resolve);server.closeAllConnections();});});
   const menu=api.catalog().find(m=>!m.closed && m.items.some(i=>i.price!=null && i.stock!==0));
   const item=menu.items.find(i=>i.price!=null && i.stock!==0);
   const body={requestId:'collection-test-0001',items:[{shop:menu.shop,dish:item.dish,qty:1,selections:(item.options||[]).map(()=>0)}],fulfilment:'hostel-gate',payment:'pickup',address:{hostel:'BSH',block:'B',room:'418',instructions:'Meet at gate'}};
@@ -22,6 +20,6 @@ test('both collection options persist, retries reuse the order, invalid location
   const pickup=await post({...body,requestId:'collection-test-0002',fulfilment:'pickup'});assert.equal(pickup.status,201);assert.equal(pickup.body.fulfilment,'pickup');
   assert.equal((await post({...body,requestId:'collection-test-0003',fulfilment:'invalid'})).status,400);
   assert.equal((await post({...body,requestId:'collection-test-0004',address:{...body.address,hostel:' '}})).status,400);
-  const saved=JSON.parse(fs.readFileSync(path.join(dir,'commerce.json'),'utf8'));assert.equal(saved.orders.length,2);assert.equal(saved.orders[1].fulfilment,'hostel-gate');
+  const saved=records.get('commerce');assert.equal(saved.orders.length,2);assert.equal(saved.orders[1].fulfilment,'hostel-gate');
   const res=await fetch(`http://127.0.0.1:${server.address().port}/api/orders/${first.body.id}`);assert.equal((await res.json()).fulfilment,'hostel-gate');
 });

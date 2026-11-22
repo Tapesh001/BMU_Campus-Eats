@@ -15,7 +15,7 @@ A campus food-ordering project bringing menus, student accounts, checkout and or
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
 ![Node.js](https://img.shields.io/badge/Node.js-22%2B-43853D?style=flat-square&logo=nodedotjs&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-5-321C18?style=flat-square)
-![Storage](https://img.shields.io/badge/Storage-Local_JSON-B94B32?style=flat-square)
+![Storage](https://img.shields.io/badge/Storage-MongoDB-B94B32?style=flat-square)
 
 [Explore the design](https://www.figma.com/design/pOPskhvCKVF6aPYKMedHs5/BMU-CAMPUS-EATS?node-id=3-1141) · [Run locally](#run-locally) · [Project structure](#project-structure) · [Team](#five-members-one-project)
 
@@ -36,7 +36,7 @@ A campus food-ordering project bringing menus, student accounts, checkout and or
 | **Manage the menu** | Admin tools for menu items, stock, restaurant availability, offers and order status. |
 | **Enjoy the details** | Cream and terracotta styling, water-surface interaction and cart motion. |
 
-> **Project demo:** orders use payment at pickup. The app does not process online payments or send orders to restaurant systems. MongoDB integration is pending.
+> **Project demo:** orders use payment at pickup. The app does not process online payments or send orders to restaurant systems.
 
 ## Project structure
 
@@ -88,22 +88,19 @@ Install **Node.js 22 or newer** with npm, then run:
 git clone https://github.com/Tapesh001/BMU_Campus-Eats.git
 cd BMU_Campus-Eats
 npm ci
-npm start
 ```
 
-Open **[http://localhost:8765](http://localhost:8765)** and keep the terminal running. For an existing copy, run the npm commands from the folder containing `package.json`.
-
-### Optional configuration
-
-Create a private `.env` beside `package.json`:
+Create a private `.env` file next to `package.json`. Copy the cluster hostname from **Atlas → Clusters → Connect → Drivers → Node.js**. Replace the two placeholders below, including the angle brackets. Percent-encode reserved characters in the database user's password.
 
 ```dotenv
-PORT=8765
-HOST=0.0.0.0
-BMU_ADMIN_PASSWORD=replace-with-your-own-long-unique-password
+MONGODB_URI=mongodb+srv://campus_eats_app:<PASSWORD>@<ATLAS_HOST>/campus_eats?retryWrites=true&w=majority
 ```
 
-`BMU_DATA_DIR` optionally sets an absolute directory for saved data. The default is `.bmu-campus-eats` in your operating-system home folder. `.env` is ignored by Git; never commit real credentials.
+Give the database user `readWrite` access on `campus_eats` and allow the server's outbound IP in Atlas. On Render, set `MONGODB_URI` in the service's **Environment**. Existing installations can continue using `BMU_MONGO_USER`, `BMU_MONGO_PASSWORD` and `BMU_MONGO_HOST`. An explicit `BMU_MONGO_DATABASE` overrides the database name in the URI.
+
+To bring forward older JSON accounts or orders, follow the [one-time import instructions](04-data/README.md) before the first startup against an empty Atlas database.
+
+For MongoDB running locally, use `MONGODB_URI=mongodb://127.0.0.1:27017/campus_eats`. With MongoDB running and reachable, start the app with `npm start` and open [localhost:8765](http://localhost:8765). Set `BMU_ADMIN_PASSWORD` privately if you need the admin dashboard.
 
 ### Try the main flows
 
@@ -143,7 +140,7 @@ Read the [complete ownership and Git workflow](05-documentation/team-roles.md). 
 | Server | Node.js + Express 5 serving both pages and `/api` routes. |
 | Accounts | BMU-domain validation, salted password hashes and expiring HTTP-only session cookies. |
 | Catalog | Repository seed JSON with private administrator-edited overrides. |
-| Submissions | Profiles, orders, favourites, addresses and offers saved to local JSON. |
+| Submissions | MongoDB stores accounts, orders, favourites, addresses and offers. |
 
 See the [architecture and API guide](05-documentation/architecture.md) for request flow and storage details.
 
@@ -153,12 +150,12 @@ See the [architecture and API guide](05-documentation/architecture.md) for reque
 | :--- | :--- |
 | Additional linked pages | Implemented across accounts, discovery, ordering and administration. |
 | JavaScript validation and UX interactions | Implemented in forms, menus, cart and checkout. |
-| Form submission and local JSON persistence | Implemented through Express APIs. |
+| Form submission and database persistence | Implemented through Express APIs. |
 | Node + Express setup and API creation | Implemented. |
 | External API integration | Not currently required for menus; browser requests use this project's own API. |
-| CRUD using MongoDB | **Pending.** Current CRUD uses local JSON. |
+| CRUD using MongoDB | Express saves admin menu creates, edits and deletes to MongoDB. |
 
-Online payment, verified restaurant fulfilment and permanent public hosting are not implemented. Restaurant details and unclear menu prices need confirmation before being presented as verified information. Sessions end on server restart; JSON storage is intended for this project demonstration.
+Online payment, verified restaurant fulfilment and permanent public hosting are not implemented. Restaurant details and unclear menu prices need confirmation before being presented as verified information. Sessions end on server restart.
 
 ---
 

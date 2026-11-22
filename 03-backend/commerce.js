@@ -1,25 +1,16 @@
-const fs = require('node:fs');
-const path = require('node:path');
 const crypto = require('node:crypto');
 
-module.exports = function installCommerce(app, directory, students, cloud = null) {
-  const file = path.join(directory, 'commerce.json');
-  let data = fs.existsSync(file)
-    ? JSON.parse(fs.readFileSync(file, 'utf8'))
-    : { orders: [], favourites: {}, addresses: {} };
-  if (cloud) data = cloud.data;
+module.exports = function installCommerce(app, students, store, data, menus) {
   data.offers ||= [];
-  const catalogFile = path.join(directory, 'catalog.json');
-  const catalog = () => cloud ? structuredClone(cloud.catalog) : JSON.parse(fs.readFileSync(fs.existsSync(catalogFile) ? catalogFile : path.join(__dirname, '..', '04-data', 'menu-data.json'), 'utf8'));
+  const catalog = () => structuredClone(menus);
+
   async function saveCatalog(next) {
-    if (cloud) { await cloud.store.save('catalog',next); cloud.catalog = next; return; }
-    fs.writeFileSync(catalogFile + '.tmp', JSON.stringify(next, null, 2), { mode: 0o600 });
-    fs.renameSync(catalogFile + '.tmp', catalogFile);
+    await store.save('catalog', next);
+    menus = next;
   }
+
   async function save(next) {
-    if (cloud) { await cloud.store.save('commerce',next); data = next; return; }
-    fs.writeFileSync(file + '.tmp', JSON.stringify(next, null, 2), { mode: 0o600 });
-    fs.renameSync(file + '.tmp', file);
+    await store.save('commerce', next);
     data = next;
   }
   function fail(message) { throw Object.assign(new Error(message), { status: 400 }); }

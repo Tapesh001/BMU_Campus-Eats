@@ -1,12 +1,28 @@
 const { MongoClient } = require('mongodb');
-module.exports = async function connectStore() {
-  if (!process.env.MONGODB_URI && !process.env.BMU_MONGO_PASSWORD) return null;
-  const uri = process.env.MONGODB_URI || 'mongodb+srv://' + encodeURIComponent(process.env.BMU_MONGO_USER) + ':' + encodeURIComponent(process.env.BMU_MONGO_PASSWORD) + '@' + process.env.BMU_MONGO_HOST + '/';
+async function connectCollection() {
+  const { MONGODB_URI, BMU_MONGO_USER, BMU_MONGO_PASSWORD, BMU_MONGO_HOST, BMU_MONGO_DATABASE } = process.env;
+  let uri = MONGODB_URI;
+  if (!uri) {
+    if (!BMU_MONGO_USER || !BMU_MONGO_PASSWORD || !BMU_MONGO_HOST) {
+      throw new Error('Set MONGODB_URI before starting the server.');
+    }
+    const user = encodeURIComponent(BMU_MONGO_USER);
+    const password = encodeURIComponent(BMU_MONGO_PASSWORD);
+    uri = 'mongodb+srv://' + user + ':' + password + '@' + BMU_MONGO_HOST + '/';
+  }
   const client = new MongoClient(uri, { serverSelectionTimeoutMS: 15000, socketTimeoutMS: 15000 });
   await client.connect();
-  const collection = client.db(process.env.BMU_MONGO_DATABASE || 'campus_eats').collection('app_state');
+  const hasDatabasePath = /^mongodb(?:\+srv)?:\/\/[^/?]+\/[^/?]+/.test(uri);
+  const database = BMU_MONGO_DATABASE || (hasDatabasePath ? client.options.dbName : 'campus_eats');
+  const collection = client.db(database).collection('app_state');
+  return { client, collection };
+}
+
+module.exports = async function connectStore() {
+  const { client, collection } = await connectCollection();
   const versions = new Map();
   return {
+    close: () => client.close(),
     async load(key, fallback) {
       await collection.updateOne({_id:key}, {$setOnInsert:{value:fallback,revision:0}}, {upsert:true});
       const doc = await collection.findOne({_id:key});
@@ -21,3 +37,5 @@ module.exports = async function connectStore() {
     }
   };
 };
+
+module.exports.connectCollection = connectCollection;

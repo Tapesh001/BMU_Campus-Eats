@@ -24,19 +24,11 @@ app.use('/api', (req,res,next) => {
     next();
   });
 });
-const directory = process.env.BMU_DATA_DIR || path.join(os.homedir(), ".bmu-campus-eats");
-const file = path.join(directory, "students.json");
-fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
-const initialStudents = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : [];
-const students = store ? await store.load("students", initialStudents) : initialStudents;
+const students = await store.load("students", []);
 const sessions = new Map();
 const lifetime = 8 * 60 * 60 * 1000;
 async function persist(next) {
-  if (store) await store.save("students", next);
-  else {
-  fs.writeFileSync(file + ".tmp", JSON.stringify(next, null, 2), { mode: 0o600 });
-  fs.renameSync(file + ".tmp", file);
-  }
+  await store.save("students", next);
   students.splice(0, students.length, ...next);
 }
 function publicProfile({ hash, salt, ...profile }) { return profile; }
@@ -99,9 +91,10 @@ app.put("/api/profile",async(req,res)=>{
   await persist(students.map(s=>s.id===updated.id ? updated : s)); res.json(publicProfile(updated));
 });
 require('./password-reset')(app, { students, persist, sessions });
-const cloudCommerce = store ? await store.load('commerce', {orders:[],favourites:{},addresses:{},offers:[]}) : null;
-const cloudCatalog = store ? await store.load('catalog', JSON.parse(fs.readFileSync(path.join(projectRoot,'04-data/menu-data.json'),'utf8'))) : null;
-const commerce = require('./commerce')(app, directory, students, store && {store, data:cloudCommerce, catalog:cloudCatalog});
+const commerceData = await store.load('commerce', { orders: [], favourites: {}, addresses: {}, offers: [] });
+const menuSeed = require('../04-data/menu-data.json');
+const menus = await store.load('catalog', menuSeed);
+const commerce = require('./commerce')(app, students, store, commerceData, menus);
 // Optional static design preview; these pages contain no browser JavaScript.
 const designsDirectory = path.join(projectRoot, '01-designs');
 for (const folder of ['css', 'assets', 'html']) {
@@ -141,4 +134,4 @@ app.listen(Number(process.env.PORT || 8765),process.env.HOST || "0.0.0.0",error=
 });
 
 }
-start().catch(error => { console.error("Startup failed:", error.name); process.exitCode = 1; });
+start().catch(error => { console.error("Startup failed:", error.name, "Check MONGODB_URI, database permissions and network access."); process.exitCode = 1; });
